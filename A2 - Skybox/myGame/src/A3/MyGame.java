@@ -390,7 +390,7 @@ public class MyGame extends VariableFrameRateGame {
         avatar.setEntity(ghostE);
         avatar.setPosition(0,0,0);
     } }
-
+        //tst
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
     }
