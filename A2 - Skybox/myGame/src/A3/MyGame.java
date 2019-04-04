@@ -81,7 +81,7 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.5", Integer.parseInt("56000"));
+        Game game = new MyGame("192.168.1.27", Integer.parseInt("56000"));
         try {
             game.startup();
             game.run();
@@ -267,16 +267,16 @@ public class MyGame extends VariableFrameRateGame {
 
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
         //Dolphin code
-        Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
-        dolphinE.setPrimitive(Primitive.TRIANGLES);
+
+ //       Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
+ //       dolphinE.setPrimitive(Primitive.TRIANGLES);
 //        Camera camera = sm.getCamera("MainCamera");
 
-        SceneNode dolphinN = playerGroupN.createChildSceneNode("myDolphinNode");
-        dolphinN.moveBackward(3.0f);
-        dolphinN.attachObject(dolphinE);
+//        SceneNode dolphinN = playerGroupN.createChildSceneNode("myDolphinNode");
+//        dolphinN.moveBackward(3.0f);
+//        dolphinN.attachObject(dolphinE);
 //        dolphinN.yaw(rotAmt);
-
-        SceneNode dolphCamNode = dolphinN.createChildSceneNode("DolphCamNode");
+//        SceneNode dolphCamNode = dolphinN.createChildSceneNode("DolphCamNode");
         //dolphCamNode.attachObject(camera);
         //dolphCamNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
 
@@ -334,7 +334,7 @@ public class MyGame extends VariableFrameRateGame {
 
         //orbitController
         setupOrbitCamera(eng, sm);
-        dolphinN.yaw(Degreef.createFrom(45.0f));
+        //dolphinN.yaw(Degreef.createFrom(45.0f));
         cubeN.yaw(Degreef.createFrom(45.0f));
 
         setupNetworking();
@@ -393,6 +393,10 @@ public class MyGame extends VariableFrameRateGame {
 
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
+    }
+
+    public void setIsConnected(boolean b) {
+        isClientConnected = b;
     }
 
     //============ END Networking =====================================
@@ -604,7 +608,4 @@ public class MyGame extends VariableFrameRateGame {
         }
     }
 
-    public void setIsConnected(boolean b) {
-        isClientConnected = b;
-    }
 }

@@ -1,1 +1,0 @@
-javaw -jar -Dsun.java2d.d3d=false -Djava.library.path="C:\javagaming\jinput\lib" myGame.jar

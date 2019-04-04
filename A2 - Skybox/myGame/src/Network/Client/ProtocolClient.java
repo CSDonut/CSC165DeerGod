@@ -57,7 +57,11 @@ public class ProtocolClient extends GameConnectionClient {
                         Float.parseFloat(messageTokens[2]),
                         Float.parseFloat(messageTokens[3]),
                         Float.parseFloat(messageTokens[4]));
-                createGhostAvatar(ghostID, ghostPosition);
+                try {
+                    createGhostAvatar(ghostID, ghostPosition);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
             if(messageTokens[0].compareTo("wsds") == 0) // rec. “create…”
@@ -74,8 +78,9 @@ public class ProtocolClient extends GameConnectionClient {
         }
     }
 
-    private void createGhostAvatar(UUID ghostID, Vector3 ghostPosition) {
+    private void createGhostAvatar(UUID ghostID, Vector3 ghostPosition) throws IOException {
         GhostAvatar ghost = new GhostAvatar(ghostID, ghostPosition);
+        game.addGhostAvatarToGameWorld(ghost);
         ghostAvatars.add(ghost);
     }
 
@@ -94,9 +99,9 @@ public class ProtocolClient extends GameConnectionClient {
         }
 
         if (exist){
+            game.removeGhostAvatarFromGameWorld(ghost);
             ghostAvatars.remove(ghost);
         }
-
     }
 
     public void sendJoinMessage() {     // format: join, localId
