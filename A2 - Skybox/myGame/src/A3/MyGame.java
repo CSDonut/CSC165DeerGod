@@ -3,7 +3,6 @@ package A3;
 import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
@@ -18,7 +17,6 @@ import myGameEngine.Controllers.Camera3PController;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import ray.input.GenericInputManager;
-import ray.input.action.AbstractInputAction;
 import ray.rage.*;
 import ray.rage.asset.texture.*;
 import ray.rage.game.*;
@@ -38,7 +36,15 @@ import ray.input.*;
 import ray.networking.IGameConnection.ProtocolType;
 
 import ray.rage.util.*;
+
 import java.awt.geom.*;
+import java.util.List;
+
+//Script imports
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 
 public class MyGame extends VariableFrameRateGame {
@@ -56,7 +62,7 @@ public class MyGame extends VariableFrameRateGame {
     float elapsTime = 0.0f;
     String elapsTimeStr, planetsVisitedString, dispStr, collectedArtifactsString;
     int elapsTimeSec, planetsVisited = 0, collectedArtifacts = 0;
-    final int MAXPLANETS = 5;
+
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
@@ -64,7 +70,9 @@ public class MyGame extends VariableFrameRateGame {
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
     Entity [] planets;
-    Entity alienArtifactsE;
+    final int MAXPLANETS = 5;
+    static protected ScriptEngine jsEngine;
+
 
     public MyGame(String serverAddr, int sPort) {
         super();
@@ -72,16 +80,28 @@ public class MyGame extends VariableFrameRateGame {
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
-        System.out.println("Left joystick on gamepad controls movement");
-        System.out.println("Right joystick controls camera controls");
-        System.out.println("Triggers control roll");
-        System.out.println("Y button controls camera toggle");
-        System.out.println("Start button ends game");
+
+
 
     }
 
     public static void main(String[] args) {
         Game game = new MyGame("192.168.1.5", Integer.parseInt("56000"));
+        //Script code
+        ScriptEngineManager factory = new ScriptEngineManager();
+        String scriptFileName = "src/Scripts/InitPlanetParams.js";
+        List<ScriptEngineFactory> list = factory.getEngineFactories();
+        System.out.println("Script Engines found: ");
+        for(ScriptEngineFactory f: list){
+            System.out.println(" Name = " + f.getEngineName()
+                    + " language = " + f.getLanguageName()
+                    + " extensions = " + f.getExtensions());
+        }
+        //get JS engine
+        jsEngine = factory.getEngineByName("js");
+        //run script
+        ((MyGame) game).executeScript(jsEngine, scriptFileName);
+
         try {
             game.startup();
             game.run();
@@ -205,6 +225,15 @@ public class MyGame extends VariableFrameRateGame {
         Angle rotAmt = Degreef.createFrom(180.0f);
         ManualObject manObjGroundPlane;
 
+        // prepare the script engine
+        ScriptEngineManager factory = new ScriptEngineManager();
+        java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
+
+        jsEngine = factory.getEngineByName("js");
+        // use spin speed setting from the first script to initialize dolphin rotation
+        File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
+        this.runScript(scriptFile1);
+
         // set up sky box
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
@@ -310,8 +339,8 @@ public class MyGame extends VariableFrameRateGame {
         SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
         plightNode.attachObject(plight);
 
-        //Rotation code
-        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), .02f);
+        //Rotation code, uses engine
+        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), ((Double)(jsEngine.get("spinSpeed"))).floatValue());
 
         //Stretch controller
         StretchController sc = new StretchController();
@@ -606,5 +635,42 @@ public class MyGame extends VariableFrameRateGame {
 
     public void setIsConnected(boolean b) {
         isClientConnected = b;
+    }
+
+    private void executeScript(ScriptEngine engine, String scriptFileName)
+    {
+        try {
+            FileReader fileReader = new FileReader(scriptFileName);
+            engine.eval(fileReader); //execute the script statements in the file
+            fileReader.close();
+        }
+        catch (FileNotFoundException e1) {
+            System.out.println(scriptFileName + " not found " + e1);
+        }
+        catch (IOException e2) {
+            System.out.println("IO problem with " + scriptFileName + e2);
+        }
+        catch (ScriptException e3) {
+            System.out.println("ScriptException in " + scriptFileName + e3);
+        }
+        catch (NullPointerException e4) {
+            System.out.println ("Null ptr exception in " + scriptFileName + e4);
+        }
+    }
+
+    private void runScript(File scriptFile)
+    { try
+    { FileReader fileReader = new FileReader(scriptFile);
+        jsEngine.eval(fileReader);
+        fileReader.close();
+    }
+    catch (FileNotFoundException e1)
+    { System.out.println(scriptFile + " not found " + e1); }
+    catch (IOException e2)
+    { System.out.println("IO problem with " + scriptFile + e2); }
+    catch (ScriptException e3)
+    { System.out.println("Script Exception in " + scriptFile + e3); }
+    catch (NullPointerException e4)
+    { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
     }
 }
