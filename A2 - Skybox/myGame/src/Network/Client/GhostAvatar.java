@@ -11,8 +11,12 @@ public class GhostAvatar {
     private UUID id;
     private SceneNode node;
     private Entity entity;
+    private Vector3 pos;
+
+
     public GhostAvatar(UUID id, Vector3 position) {
         this.id = id;
+        this.pos = position;
     }
 
     public Entity getEntity() {
@@ -27,13 +31,24 @@ public class GhostAvatar {
         return node;
     }
 
+    public Vector3 getPos() {
+        return pos;
+    }
+
     public void setNode(SceneNode ghostN) {
+        this.node = ghostN;
     }
 
     public void setEntity(Entity ghostE) {
+        this.entity = ghostE;
     }
 
-    public void setPosition(int i, int j, int k) {
+    public void setPosition(float i, float j, float k) {
+
+
+
     }
+
+
 
 }

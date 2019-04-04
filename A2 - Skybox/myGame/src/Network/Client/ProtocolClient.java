@@ -64,16 +64,19 @@ public class ProtocolClient extends GameConnectionClient {
                 }
             }
 
-            if(messageTokens[0].compareTo("wsds") == 0) // rec. “create…”
-            { // etc…..
-            }
-
             if(messageTokens[0].compareTo("wsds") == 0) // rec. “wants…”
             { // etc…..
             }
 
             if(messageTokens[0].compareTo("move") == 0) // rec. “move...”
-            { // etc…..
+            {
+                UUID ghostID = UUID.fromString(messageTokens[1]);
+                Vector3 ghostPosition = Vector3f.createFrom(
+                        Float.parseFloat(messageTokens[2]),
+                        Float.parseFloat(messageTokens[3]),
+                        Float.parseFloat(messageTokens[4]));
+                MoveAvatar(ghostID, ghostPosition);
+
             }
         }
     }
@@ -120,5 +123,23 @@ public class ProtocolClient extends GameConnectionClient {
         }
     }
 
+    public void MoveAvatar(UUID ghostID, Vector3 position){
+        GhostAvatar ghost = new GhostAvatar(null, null);
+        Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
+        boolean exist = false;
+
+        while (iterator.hasNext()){
+            GhostAvatar temp = iterator.next();
+            if(temp.getId() == ghostID){
+                exist = true;
+                ghost = temp;
+            }
+        }
+
+        if (exist){
+            ghost.setPosition(position.x(), position.y(),position.z());
+        }
+
+    }
 
 }

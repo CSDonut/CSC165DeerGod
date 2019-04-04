@@ -68,7 +68,7 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
     public void sendJoinedMessage(UUID clientID, boolean success)
     { // format: join, success or join, failure
         try
-        { String message = new String("join,");
+        { String message = "join,";
             if (success) message += "success";
             else message += "failure";
             sendPacket(message, clientID);
@@ -80,7 +80,7 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
     public void sendCreateMessages(UUID clientID, String[] position)
     { // format: create, remoteId, x, y, z
         try
-        { String message = new String("create," + clientID.toString());
+        { String message = "create," + clientID.toString();
             message += "," + position[0];
             message += "," + position[1];
             message += "," + position[2];
@@ -99,10 +99,24 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
     }
 
     public void sendMoveMessages(UUID clientID, String[] position) {
-        // etc…..
+        try
+        { String message = "move," + clientID.toString();
+            message += "," + position[0];
+            message += "," + position[1];
+            message += "," + position[2];
+            forwardPacketToAll(message, clientID);
+        }
+        catch (IOException e) { e.printStackTrace();
+        }
     }
 
     public void sendByeMessages(UUID clientID) {
-        // etc...
+        try
+        { String message = "bye," + clientID.toString();
+            forwardPacketToAll(message, clientID);
+        }
+        catch (IOException e) { e.printStackTrace();
+        }
+
     }
 }

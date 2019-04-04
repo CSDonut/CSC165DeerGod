@@ -385,10 +385,11 @@ public class MyGame extends VariableFrameRateGame {
         SceneNode ghostN = getEngine().getSceneManager().getRootSceneNode().
                 createChildSceneNode(avatar.getId().toString());
         ghostN.attachObject(ghostE);
-        ghostN.setLocalPosition(0, 0 ,0);
+        ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
         avatar.setEntity(ghostE);
-        avatar.setPosition(0,0,0);
+        //avatar.setPosition(0,0,0);
+
     } }
 
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)

@@ -9,5 +9,18 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="myGame" level="project" />
     <orderEntry type="library" name="myGame1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://C:/javagaming/jinput/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <NATIVE>
+          <root url="file://C:/javagaming/jinput/lib" />
+        </NATIVE>
+        <SOURCES />
+        <jarDirectory url="file://C:/javagaming/jinput/lib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
