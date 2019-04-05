@@ -70,6 +70,7 @@ public class MyGame extends VariableFrameRateGame {
     private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
     boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
+    static protected ScriptEngineManager factory;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
@@ -93,7 +94,7 @@ public class MyGame extends VariableFrameRateGame {
 
     public static void main(String[] args) {
         Game game = new MyGame("192.168.1.17", Integer.parseInt("59000"));
-        ScriptEngineManager factory = new ScriptEngineManager();
+        factory = new ScriptEngineManager();
         String scriptFileName = "src/Scripts/InitPlanetParams.js";
         List<ScriptEngineFactory> list = factory.getEngineFactories();
         System.out.println("Script Engines found: ");
@@ -230,7 +231,6 @@ public class MyGame extends VariableFrameRateGame {
         Angle rotAmt = Degreef.createFrom(180.0f);
         ManualObject manObjGroundPlane;
 
-        ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
 
         jsEngine = factory.getEngineByName("js");
@@ -667,6 +667,8 @@ public class MyGame extends VariableFrameRateGame {
     }
 
 
+//    ======================== Scripting methods =========================================
+
     private void executeScript(ScriptEngine engine, String scriptFileName)
     {
         try {
@@ -703,5 +705,6 @@ public class MyGame extends VariableFrameRateGame {
     catch (NullPointerException e4)
     { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
     }
-
+// =================== End scripting methods ===================================================
+    
 }
