@@ -1,0 +1,1 @@
+var spinSpeed = 10.0;

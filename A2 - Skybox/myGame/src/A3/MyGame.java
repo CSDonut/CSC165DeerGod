@@ -36,6 +36,13 @@ import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
 import ray.input.*;
 import ray.networking.IGameConnection.ProtocolType;
+import java.util.List;
+
+//Script imports
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import ray.rage.util.*;
 import java.awt.geom.*;
@@ -62,6 +69,7 @@ public class MyGame extends VariableFrameRateGame {
     private Camera3PController orbitController, orbitController2;
     private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
     boolean ghostListEmpty = true;
+    static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
@@ -84,7 +92,21 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.27", Integer.parseInt("59000"));
+        Game game = new MyGame("192.168.1.17", Integer.parseInt("59000"));
+        ScriptEngineManager factory = new ScriptEngineManager();
+        String scriptFileName = "src/Scripts/InitPlanetParams.js";
+        List<ScriptEngineFactory> list = factory.getEngineFactories();
+        System.out.println("Script Engines found: ");
+        for(ScriptEngineFactory f: list){
+            System.out.println(" Name = " + f.getEngineName()
+                    + " language = " + f.getLanguageName()
+                    + " extensions = " + f.getExtensions());
+        }
+        //get JS engine
+        jsEngine = factory.getEngineByName("js");
+        //run script
+        ((MyGame) game).executeScript(jsEngine, scriptFileName);
+
         try {
             game.startup();
             game.run();
@@ -208,6 +230,14 @@ public class MyGame extends VariableFrameRateGame {
         Angle rotAmt = Degreef.createFrom(180.0f);
         ManualObject manObjGroundPlane;
 
+        ScriptEngineManager factory = new ScriptEngineManager();
+        java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
+
+        jsEngine = factory.getEngineByName("js");
+        // use spin speed setting from the first script to initialize dolphin rotation
+        File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
+        this.runScript(scriptFile1);
+
         // set up sky box
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
@@ -314,7 +344,7 @@ public class MyGame extends VariableFrameRateGame {
         plightNode.attachObject(plight);
 
         //Rotation code
-        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), .02f);
+        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), ((Double)(jsEngine.get("spinSpeed"))).floatValue());
 
         //Stretch controller
         StretchController sc = new StretchController();
@@ -339,6 +369,8 @@ public class MyGame extends VariableFrameRateGame {
         setupOrbitCamera(eng, sm);
         //dolphinN.yaw(Degreef.createFrom(45.0f));
         cubeN.yaw(Degreef.createFrom(45.0f));
+
+
 
         setupNetworking();
 
@@ -632,6 +664,44 @@ public class MyGame extends VariableFrameRateGame {
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
             }
         }
+    }
+
+
+    private void executeScript(ScriptEngine engine, String scriptFileName)
+    {
+        try {
+            FileReader fileReader = new FileReader(scriptFileName);
+            engine.eval(fileReader); //execute the script statements in the file
+            fileReader.close();
+        }
+        catch (FileNotFoundException e1) {
+            System.out.println(scriptFileName + " not found " + e1);
+        }
+        catch (IOException e2) {
+            System.out.println("IO problem with " + scriptFileName + e2);
+        }
+        catch (ScriptException e3) {
+            System.out.println("ScriptException in " + scriptFileName + e3);
+        }
+        catch (NullPointerException e4) {
+            System.out.println ("Null ptr exception in " + scriptFileName + e4);
+        }
+    }
+
+    private void runScript(File scriptFile)
+    { try
+    { FileReader fileReader = new FileReader(scriptFile);
+        jsEngine.eval(fileReader);
+        fileReader.close();
+    }
+    catch (FileNotFoundException e1)
+    { System.out.println(scriptFile + " not found " + e1); }
+    catch (IOException e2)
+    { System.out.println("IO problem with " + scriptFile + e2); }
+    catch (ScriptException e3)
+    { System.out.println("Script Exception in " + scriptFile + e3); }
+    catch (NullPointerException e4)
+    { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
     }
 
 }
