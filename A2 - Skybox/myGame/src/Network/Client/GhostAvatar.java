@@ -45,7 +45,6 @@ public class GhostAvatar {
     }
 
     public void setPosition(Vector3 newPosition) {
-        System.out.println(newPosition);
         pos = newPosition;
     }
 

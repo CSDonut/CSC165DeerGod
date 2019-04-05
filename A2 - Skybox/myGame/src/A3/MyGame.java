@@ -442,9 +442,7 @@ public class MyGame extends VariableFrameRateGame {
         orbitController = new Camera3PController(camera, cameraN, cubeN, gpName, im);
 
     }
-
-
-
+    
     protected ManualObject makePlane(Engine eng, SceneManager sm) throws IOException {
         ManualObject line = sm.createManualObject("GroundPlane");
         ManualObjectSection lineSec =

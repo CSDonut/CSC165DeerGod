@@ -111,7 +111,7 @@ public class ProtocolClient extends GameConnectionClient {
 
         while (iterator.hasNext()){
             GhostAvatar temp = iterator.next();
-            if(temp.getId() == ghostID){
+            if(temp.getId().toString().equals(ghostID.toString())){
                 exist = true;
                 ghost = temp;
             }
@@ -155,7 +155,6 @@ public class ProtocolClient extends GameConnectionClient {
             GhostAvatar temp = iterator.next();
 
             if(temp.getId().toString().equals(ghostID.toString())){
-                System.out.println("here");
                 exist = true;
                 ghost = temp;
             }
