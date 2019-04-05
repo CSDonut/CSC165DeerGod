@@ -60,11 +60,14 @@ public class MyGame extends VariableFrameRateGame {
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
+    private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
+    boolean ghostListEmpty = true;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
     Entity [] planets;
     Entity alienArtifactsE;
+
 
     public MyGame(String serverAddr, int sPort) {
         super();
@@ -81,7 +84,7 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.27", Integer.parseInt("56000"));
+        Game game = new MyGame("192.168.1.27", Integer.parseInt("59000"));
         try {
             game.startup();
             game.run();
@@ -379,11 +382,14 @@ public class MyGame extends VariableFrameRateGame {
 
     public void addGhostAvatarToGameWorld(GhostAvatar avatar)
             throws IOException
-    { if (avatar != null)
-    { Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "whatever.obj");
+    { if (avatar != null) {
+        ghostList.add(avatar);
+        ghostListEmpty = false;
+        Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "dolphinHighPoly.obj");
         ghostE.setPrimitive(Primitive.TRIANGLES);
         SceneNode ghostN = getEngine().getSceneManager().getRootSceneNode().
                 createChildSceneNode(avatar.getId().toString());
+        System.out.println(avatar.getId());
         ghostN.attachObject(ghostE);
         ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
@@ -398,6 +404,25 @@ public class MyGame extends VariableFrameRateGame {
 
     public void setIsConnected(boolean b) {
         isClientConnected = b;
+    }
+
+    public ProtocolClient getProtClient() {
+        return protClient;
+    }
+
+    public boolean getisClientConnected() {
+        return isClientConnected;
+    }
+
+    public void updateGhostPosition(){
+
+        if(!ghostListEmpty){
+           Iterator<GhostAvatar> iterate = ghostList.iterator();
+           while (iterate.hasNext()){
+               GhostAvatar temp = iterate.next();
+               temp.getNode().setLocalPosition(temp.getPos());
+           }
+        }
     }
 
     //============ END Networking =====================================
@@ -532,21 +557,23 @@ public class MyGame extends VariableFrameRateGame {
         elapsTimeStr = Integer.toString(elapsTimeSec);
         planetsVisitedString = Integer.toString(planetsVisited);
         collectedArtifactsString= Integer.toString(collectedArtifacts);
-        dispStr = "Cube Time = " + elapsTimeStr;
+        dispStr = "Cube position " + elapsTimeStr;
         rs.setHUD(dispStr, 15, 15);
         dispStr = "Dolphin Time = " + elapsTimeStr;
         rs.setHUD2(dispStr, 15, (rs.getRenderWindow().getViewport(0).getActualHeight() + 20));
         im.update(elapsTime);
         orbitController.updateCameraPosition();
+        updateGhostPosition();
 //        orbitController2.updateCameraPosition();
+
         processNetworking(elapsTime);
     }
 
     protected void setupInputs(){
         im = new GenericInputManager();
         //Creating action objects
-        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this);
-        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this);
+        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this, protClient);
+        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this,protClient);
         QuitGameAction quitGameCmd = new QuitGameAction(this);
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);

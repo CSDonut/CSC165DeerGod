@@ -1,6 +1,7 @@
 package Network.Client;
 
 import A3.MyGame;
+import graphicslib3D.Vector3D;
 import ray.networking.client.GameConnectionClient;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
@@ -29,7 +30,6 @@ public class ProtocolClient extends GameConnectionClient {
     protected void processPacket(Object msg) {
         String strMessage = (String) msg;
         String[] messageTokens = strMessage.split(",");
-        System.out.println("Connected");
         if (messageTokens.length > 0) {
 
             if (messageTokens[0].compareTo("join") == 0) // receive “join”
@@ -66,17 +66,33 @@ public class ProtocolClient extends GameConnectionClient {
 
             if(messageTokens[0].compareTo("wsds") == 0) // rec. “wants…”
             { // etc…..
+                UUID ghostID = UUID.fromString(messageTokens[1]);
+                Vector3 ghostPosition = Vector3f.createFrom(
+                        game.getPlayerPosition().x(),
+                        game.getPlayerPosition().y(),
+                        game.getPlayerPosition().z());
+
+                try {
+                    sendDetailsForMessage(ghostID, ghostPosition);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             if(messageTokens[0].compareTo("move") == 0) // rec. “move...”
             {
+
                 UUID ghostID = UUID.fromString(messageTokens[1]);
                 Vector3 ghostPosition = Vector3f.createFrom(
                         Float.parseFloat(messageTokens[2]),
                         Float.parseFloat(messageTokens[3]),
                         Float.parseFloat(messageTokens[4]));
-                MoveAvatar(ghostID, ghostPosition);
-
+                try {
+                    MoveAvatar(ghostID, ghostPosition);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -123,23 +139,45 @@ public class ProtocolClient extends GameConnectionClient {
         }
     }
 
-    public void MoveAvatar(UUID ghostID, Vector3 position){
+    public void sendMoveMessage(Vector3 position) throws IOException {
+        String message = "move," + id.toString();
+        message += "," + position.x()+"," + position.y() + "," + position.z();
+        sendPacket(message);
+    }
+
+    public void MoveAvatar(UUID ghostID, Vector3 position) throws IOException {
+
         GhostAvatar ghost = new GhostAvatar(null, null);
         Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
         boolean exist = false;
 
         while (iterator.hasNext()){
             GhostAvatar temp = iterator.next();
-            if(temp.getId() == ghostID){
+
+            if(temp.getId().toString().equals(ghostID.toString())){
+                System.out.println("here");
                 exist = true;
                 ghost = temp;
             }
         }
 
+
         if (exist){
-            ghost.setPosition(position.x(), position.y(),position.z());
+            ghost.setPosition(position);
         }
 
+    }
+
+    public void sendDetailsForMessage(UUID remId, Vector3 position) throws IOException {
+        String message = "dsfr," + id.toString();
+        message += "," + position.x()+"," + position.y() + "," + position.z();
+        sendPacket(message);
+        // etc…..
+    }
+
+    public void sendByeMessage() throws IOException {
+        String message = "bye," + id.toString();
+        sendPacket(message);
     }
 
 }

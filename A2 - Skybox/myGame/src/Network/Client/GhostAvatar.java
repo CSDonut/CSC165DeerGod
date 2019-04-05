@@ -3,6 +3,7 @@ package Network.Client;
 import ray.rage.scene.Entity;
 import ray.rage.scene.SceneNode;
 import ray.rml.Vector3;
+import ray.rml.Vector3f;
 
 import java.util.UUID;
 
@@ -43,12 +44,9 @@ public class GhostAvatar {
         this.entity = ghostE;
     }
 
-    public void setPosition(float i, float j, float k) {
-
-
-
+    public void setPosition(Vector3 newPosition) {
+        System.out.println(newPosition);
+        pos = newPosition;
     }
-
-
 
 }
