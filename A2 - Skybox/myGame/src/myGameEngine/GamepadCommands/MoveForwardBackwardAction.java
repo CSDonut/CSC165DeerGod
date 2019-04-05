@@ -26,7 +26,7 @@ public class MoveForwardBackwardAction extends AbstractInputAction{
         cubeN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         protClient = obj.getProtClient();
 
-        if(e.getValue() <= 0.3 || e.getValue() >= -0.3){
+        if(e.getValue() <= 0.1 || e.getValue() >= -0.1){
             if(new CheckIfAbovePlane().checkLocal(cubeN))
                 cubeN.moveBackward(e.getValue() / speedScale);
             try {

@@ -92,7 +92,7 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.17", Integer.parseInt("59000"));
+        Game game = new MyGame("10.117.119.67", Integer.parseInt("59000"));
         ScriptEngineManager factory = new ScriptEngineManager();
         String scriptFileName = "src/Scripts/InitPlanetParams.js";
         List<ScriptEngineFactory> list = factory.getEngineFactories();
@@ -467,10 +467,16 @@ public class MyGame extends VariableFrameRateGame {
 //        String msName = im.getMouseName();
 //        orbitController = new Camera3PController(camera, cameraN, dolphinN, msName, im);
 
+        String gpName;
         SceneNode cubeN = sm.getSceneNode("myCubeNode");
         SceneNode cameraN = sm.getSceneNode("MainCameraNode");
         Camera camera = sm.getCamera("MainCamera");
-        String gpName = im.getFirstGamepadName();
+        if(im.getFirstGamepadName() == null){
+            gpName = im.getMouseName();
+        }else{
+            gpName = im.getFirstGamepadName();
+        }
+
         orbitController = new Camera3PController(camera, cameraN, cubeN, gpName, im);
 
     }
@@ -617,6 +623,7 @@ public class MyGame extends VariableFrameRateGame {
             if (c.getType() == Controller.Type.KEYBOARD) {
                 //Quit game action using q key on keyboard
                 im.associateAction(c, Component.Identifier.Key.Q, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+
 
                 //move forward action using key W on keyboard
                 im.associateAction(c, Component.Identifier.Key.W, new KBMoveForwardAction(this), InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
