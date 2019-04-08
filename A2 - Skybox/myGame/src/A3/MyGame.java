@@ -36,6 +36,13 @@ import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
 import ray.input.*;
 import ray.networking.IGameConnection.ProtocolType;
+import java.util.List;
+
+//Script imports
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 import ray.rage.util.*;
 import java.awt.geom.*;
@@ -60,11 +67,15 @@ public class MyGame extends VariableFrameRateGame {
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
+    private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
+    boolean ghostListEmpty = true;
+    static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
     Entity [] planets;
     Entity alienArtifactsE;
+
 
     public MyGame(String serverAddr, int sPort) {
         super();
@@ -81,7 +92,21 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.5", Integer.parseInt("56000"));
+        Game game = new MyGame("10.117.119.67", Integer.parseInt("59000"));
+        ScriptEngineManager factory = new ScriptEngineManager();
+        String scriptFileName = "src/Scripts/InitPlanetParams.js";
+        List<ScriptEngineFactory> list = factory.getEngineFactories();
+        System.out.println("Script Engines found: ");
+        for(ScriptEngineFactory f: list){
+            System.out.println(" Name = " + f.getEngineName()
+                    + " language = " + f.getLanguageName()
+                    + " extensions = " + f.getExtensions());
+        }
+        //get JS engine
+        jsEngine = factory.getEngineByName("js");
+        //run script
+        ((MyGame) game).executeScript(jsEngine, scriptFileName);
+
         try {
             game.startup();
             game.run();
@@ -170,8 +195,6 @@ public class MyGame extends VariableFrameRateGame {
             }
         }
 
-
-
     }
 
 
@@ -204,6 +227,14 @@ public class MyGame extends VariableFrameRateGame {
         TextureState state = (TextureState)rs.createRenderState(RenderState.Type.TEXTURE);
         Angle rotAmt = Degreef.createFrom(180.0f);
         ManualObject manObjGroundPlane;
+
+        ScriptEngineManager factory = new ScriptEngineManager();
+        java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
+
+        jsEngine = factory.getEngineByName("js");
+        // use spin speed setting from the first script to initialize dolphin rotation
+        File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
+        this.runScript(scriptFile1);
 
         // set up sky box
         Configuration conf = eng.getConfiguration();
@@ -267,16 +298,16 @@ public class MyGame extends VariableFrameRateGame {
 
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
         //Dolphin code
-        Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
-        dolphinE.setPrimitive(Primitive.TRIANGLES);
+
+ //       Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
+ //       dolphinE.setPrimitive(Primitive.TRIANGLES);
 //        Camera camera = sm.getCamera("MainCamera");
 
-        SceneNode dolphinN = playerGroupN.createChildSceneNode("myDolphinNode");
-        dolphinN.moveBackward(3.0f);
-        dolphinN.attachObject(dolphinE);
+//        SceneNode dolphinN = playerGroupN.createChildSceneNode("myDolphinNode");
+//        dolphinN.moveBackward(3.0f);
+//        dolphinN.attachObject(dolphinE);
 //        dolphinN.yaw(rotAmt);
-
-        SceneNode dolphCamNode = dolphinN.createChildSceneNode("DolphCamNode");
+//        SceneNode dolphCamNode = dolphinN.createChildSceneNode("DolphCamNode");
         //dolphCamNode.attachObject(camera);
         //dolphCamNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
 
@@ -305,13 +336,13 @@ public class MyGame extends VariableFrameRateGame {
         plight.setAmbient(new Color(.3f, .3f, .3f));
         plight.setDiffuse(new Color(.7f, .7f, .7f));
         plight.setSpecular(new Color(1.0f, 1.0f, 1.0f));
-        plight.setRange(5f);
+        plight.setRange(100f);
 
         SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
         plightNode.attachObject(plight);
 
         //Rotation code
-        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), .02f);
+        RotationController rc = new RotationController(Vector3f.createUnitVectorY(), ((Double)(jsEngine.get("spinSpeed"))).floatValue());
 
         //Stretch controller
         StretchController sc = new StretchController();
@@ -334,11 +365,24 @@ public class MyGame extends VariableFrameRateGame {
 
         //orbitController
         setupOrbitCamera(eng, sm);
-        dolphinN.yaw(Degreef.createFrom(45.0f));
+        //dolphinN.yaw(Degreef.createFrom(45.0f));
         cubeN.yaw(Degreef.createFrom(45.0f));
 
         setupNetworking();
 
+        //============== The Floor =======================================
+        Tessellation tessE = sm.createTessellation("tessE", 6);
+        tessE.setSubdivisions(8f);
+
+        SceneNode tessN =
+                sm.getRootSceneNode().
+                        createChildSceneNode("TessN");
+        tessN.attachObject(tessE);
+
+        tessN.scale(50, 0, 50);
+        tessE.setHeightMap(this.getEngine(), "ElderScrollsHeightMap.jpg");
+        tessE.setTexture(this.getEngine(), "blue.jpeg");
+        tessE.setNormalMap(getEngine(),"NormalMap.jpg");
 
     }
 
@@ -379,20 +423,46 @@ public class MyGame extends VariableFrameRateGame {
 
     public void addGhostAvatarToGameWorld(GhostAvatar avatar)
             throws IOException
-    { if (avatar != null)
-    { Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "whatever.obj");
+    { if (avatar != null) {
+        ghostList.add(avatar);
+        ghostListEmpty = false;
+        Entity ghostE = getEngine().getSceneManager().createEntity(avatar.getId().toString()+ "Entity", "dolphinHighPoly.obj");
         ghostE.setPrimitive(Primitive.TRIANGLES);
         SceneNode ghostN = getEngine().getSceneManager().getRootSceneNode().
                 createChildSceneNode(avatar.getId().toString());
+        System.out.println(avatar.getId());
         ghostN.attachObject(ghostE);
-        ghostN.setLocalPosition(0, 0 ,0);
+        ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
         avatar.setEntity(ghostE);
-        avatar.setPosition(0,0,0);
+
     } }
 
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
+    }
+
+    public void setIsConnected(boolean b) {
+        isClientConnected = b;
+    }
+
+    public ProtocolClient getProtClient() {
+        return protClient;
+    }
+
+    public boolean getisClientConnected() {
+        return isClientConnected;
+    }
+
+    public void updateGhostPosition(){
+
+        if(!ghostListEmpty){
+           Iterator<GhostAvatar> iterate = ghostList.iterator();
+           while (iterate.hasNext()){
+               GhostAvatar temp = iterate.next();
+               temp.getNode().setLocalPosition(temp.getPos());
+           }
+        }
     }
 
     //============ END Networking =====================================
@@ -405,118 +475,20 @@ public class MyGame extends VariableFrameRateGame {
 //        String msName = im.getMouseName();
 //        orbitController = new Camera3PController(camera, cameraN, dolphinN, msName, im);
 
+        String gpName;
         SceneNode cubeN = sm.getSceneNode("myCubeNode");
         SceneNode cameraN = sm.getSceneNode("MainCameraNode");
         Camera camera = sm.getCamera("MainCamera");
-        String gpName = im.getFirstGamepadName();
+        if(im.getFirstGamepadName() == null){
+            gpName = im.getMouseName();
+        }else{
+            gpName = im.getFirstGamepadName();
+        }
+
         orbitController = new Camera3PController(camera, cameraN, cubeN, gpName, im);
 
     }
 
-
-
-    protected ManualObject makePlane(Engine eng, SceneManager sm) throws IOException {
-        ManualObject line = sm.createManualObject("GroundPlane");
-        ManualObjectSection lineSec =
-                line.createManualSection("LineSelection");
-        line.setGpuShaderProgram(sm.getRenderSystem().
-                getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
-
-        float[] vertices = new float[]{
-                -1.0f, -0.01f, 1.0f, 1.0f,  -0.01f, 1.0f, -1.0f,   -0.01f, -1.0f,
-                -1.0f,  -0.01f, -1.0f, 1.0f,   -0.01f, 1.0f, -1.0f,    -0.01f, 1.0f, //UF
-                1.0f,    -0.01f, -1.0f, -1.0f,   -0.01f, -1.0f, 1.0f,    -0.01f, 1.0f,
-                1.0f,    -0.01f, 1.0f, -1.0f,    -0.01f, -1.0f, 1.0f,    -0.01f, -1.0f //UR
-        };
-
-        float[] texcoords = new float[]{
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-        };
-
-        float[] normals = new float[]{
-                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-
-        };
-
-        int[] indices = new int[] {0,1,2,3,4,5,6,7,8,9,10,11};
-        FloatBuffer vertBuf = BufferUtil.directFloatBuffer(vertices);
-        FloatBuffer texBuf = BufferUtil.directFloatBuffer(texcoords);
-        FloatBuffer normBuf = BufferUtil.directFloatBuffer(normals);
-        IntBuffer indexBuf = BufferUtil.directIntBuffer(indices);
-        lineSec.setVertexBuffer(vertBuf);
-        lineSec.setTextureCoordsBuffer(texBuf);
-        lineSec.setNormalsBuffer(normBuf);
-        lineSec.setIndexBuffer(indexBuf);
-        Texture tex =
-                eng.getTextureManager().getAssetByPath("chain-fence.jpeg");
-        TextureState texState = (TextureState)sm.getRenderSystem().
-                createRenderState(RenderState.Type.TEXTURE);
-        texState.setTexture(tex);
-        FrontFaceState faceState = (FrontFaceState) sm.getRenderSystem().
-                createRenderState(RenderState.Type.FRONT_FACE);
-        line.setDataSource(DataSource.INDEX_BUFFER);
-        line.setRenderState(texState);
-        line.setRenderState(faceState);
-        return line;
-    }
-
-    protected ManualObject makePyramid(Engine eng, SceneManager sm)
-            throws IOException
-    { ManualObject pyr = sm.createManualObject("Pyramid");
-        ManualObjectSection pyrSec =
-                pyr.createManualSection("PyramidSection");
-        pyr.setGpuShaderProgram(sm.getRenderSystem().
-                getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
-        float[] vertices = new float[]
-                { -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //front
-                        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //right
-                        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //back
-                        -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //left
-                        0.0f, -2.0f, 0.0f,1.0f, -1.0f, 1.0f,-1.0f, -1.0f, 1.0f, //bottom front
-                        0.0f, -2.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, //bottom right
-                        0.0f, -2.0f, 0.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, //bottom left
-                        0.0f, -2.0f, 0.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f //bottom back
-
-                };
-        float[] texcoords = new float[]
-                { 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f
-                };
-        float[] normals = new float[]
-                { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f,
-                        -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f
-                };
-        int[] indices = new int[] { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18, 19, 20, 21, 22, 23, 24, 25, 26};
-        FloatBuffer vertBuf = BufferUtil.directFloatBuffer(vertices);
-        FloatBuffer texBuf = BufferUtil.directFloatBuffer(texcoords);
-        FloatBuffer normBuf = BufferUtil.directFloatBuffer(normals);
-        IntBuffer indexBuf = BufferUtil.directIntBuffer(indices);
-        pyrSec.setVertexBuffer(vertBuf);
-        pyrSec.setTextureCoordsBuffer(texBuf);
-        pyrSec.setNormalsBuffer(normBuf);
-        pyrSec.setIndexBuffer(indexBuf);
-        Texture tex =
-                eng.getTextureManager().getAssetByPath("red.jpeg");
-        TextureState texState = (TextureState)sm.getRenderSystem().
-                createRenderState(RenderState.Type.TEXTURE);
-        texState.setTexture(tex);
-        FrontFaceState faceState = (FrontFaceState) sm.getRenderSystem().
-                createRenderState(RenderState.Type.FRONT_FACE);
-        pyr.setDataSource(DataSource.INDEX_BUFFER);
-        pyr.setRenderState(texState);
-        pyr.setRenderState(faceState);
-        return pyr;
-    }
     @Override
     protected void update(Engine engine) {
         // build and set HUD
@@ -527,21 +499,23 @@ public class MyGame extends VariableFrameRateGame {
         elapsTimeStr = Integer.toString(elapsTimeSec);
         planetsVisitedString = Integer.toString(planetsVisited);
         collectedArtifactsString= Integer.toString(collectedArtifacts);
-        dispStr = "Cube Time = " + elapsTimeStr;
+        dispStr = "Cube position " + elapsTimeStr;
         rs.setHUD(dispStr, 15, 15);
         dispStr = "Dolphin Time = " + elapsTimeStr;
         rs.setHUD2(dispStr, 15, (rs.getRenderWindow().getViewport(0).getActualHeight() + 20));
         im.update(elapsTime);
         orbitController.updateCameraPosition();
+        updateGhostPosition();
 //        orbitController2.updateCameraPosition();
+
         processNetworking(elapsTime);
     }
 
     protected void setupInputs(){
         im = new GenericInputManager();
         //Creating action objects
-        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this);
-        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this);
+        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this, protClient);
+        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this,protClient);
         QuitGameAction quitGameCmd = new QuitGameAction(this);
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
@@ -555,6 +529,7 @@ public class MyGame extends VariableFrameRateGame {
             if (c.getType() == Controller.Type.KEYBOARD) {
                 //Quit game action using q key on keyboard
                 im.associateAction(c, Component.Identifier.Key.Q, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+
 
                 //move forward action using key W on keyboard
                 im.associateAction(c, Component.Identifier.Key.W, new KBMoveForwardAction(this), InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
@@ -604,7 +579,42 @@ public class MyGame extends VariableFrameRateGame {
         }
     }
 
-    public void setIsConnected(boolean b) {
-        isClientConnected = b;
+
+    private void executeScript(ScriptEngine engine, String scriptFileName)
+    {
+        try {
+            FileReader fileReader = new FileReader(scriptFileName);
+            engine.eval(fileReader); //execute the script statements in the file
+            fileReader.close();
+        }
+        catch (FileNotFoundException e1) {
+            System.out.println(scriptFileName + " not found " + e1);
+        }
+        catch (IOException e2) {
+            System.out.println("IO problem with " + scriptFileName + e2);
+        }
+        catch (ScriptException e3) {
+            System.out.println("ScriptException in " + scriptFileName + e3);
+        }
+        catch (NullPointerException e4) {
+            System.out.println ("Null ptr exception in " + scriptFileName + e4);
+        }
     }
+
+    private void runScript(File scriptFile)
+    { try
+    { FileReader fileReader = new FileReader(scriptFile);
+        jsEngine.eval(fileReader);
+        fileReader.close();
+    }
+    catch (FileNotFoundException e1)
+    { System.out.println(scriptFile + " not found " + e1); }
+    catch (IOException e2)
+    { System.out.println("IO problem with " + scriptFile + e2); }
+    catch (ScriptException e3)
+    { System.out.println("Script Exception in " + scriptFile + e3); }
+    catch (NullPointerException e4)
+    { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
+    }
+
 }

@@ -18,7 +18,7 @@ public class NetworkingServer {
 
     public static void main(String[] args) {
 
-        String port = "56000";
+        String port = "59000";
         String protocol = "UDP";
         NetworkingServer app = new NetworkingServer(Integer.parseInt(port), protocol);
     }

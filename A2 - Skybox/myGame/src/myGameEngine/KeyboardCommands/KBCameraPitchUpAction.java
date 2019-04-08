@@ -20,7 +20,7 @@ public class KBCameraPitchUpAction extends AbstractInputAction{
     }
 
     public void performAction(float time, Event e){
-        dolphinN = obj.getEngine().getSceneManager().getSceneNode("myDolphinNode");
+        dolphinN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         rotAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
         pitchAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
 

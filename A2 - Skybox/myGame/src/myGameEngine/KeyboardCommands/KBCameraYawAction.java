@@ -21,7 +21,7 @@ public class KBCameraYawAction extends AbstractInputAction{
     }
 
     public void performAction(float time, Event e){
-        dolphinN = obj.getEngine().getSceneManager().getSceneNode("myDolphinNode");
+        dolphinN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         yawAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
         yawAmtInv = Degreef.createFrom(-(e.getValue()/speedScaleInvert));
 
