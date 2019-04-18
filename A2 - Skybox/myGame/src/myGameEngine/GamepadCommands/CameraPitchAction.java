@@ -11,8 +11,8 @@ public class CameraPitchAction extends AbstractInputAction{
     private Camera camera;
     private SceneNode cubeN;
     private MyGame obj;
-    private float speedScaleInvert = -2; //The higher the number, the slower the objects move, negative to invert yaw
-    private float speedScale = 4; //The higher the number, the slower the object moves
+    private float speedScaleInvert = -1; //The higher the number, the slower the objects move, negative to invert yaw
+    private float speedScale = 1; //The higher the number, the slower the object moves
     Angle rotAmt, pitchAmt;
 
     public CameraPitchAction(MyGame myGameObj){
