@@ -59,6 +59,7 @@ public class MyGame extends VariableFrameRateGame {
     private ProtocolClient protClient;
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
+    private int test;
 
     GL4RenderSystem rs;
     float elapsTime = 0.0f;
@@ -94,19 +95,19 @@ public class MyGame extends VariableFrameRateGame {
 
     public static void main(String[] args) {
         Game game = new MyGame("10.117.119.67", Integer.parseInt("59000"));
-//        ScriptEngineManager factory = new ScriptEngineManager();
-//        String scriptFileName = "src/Scripts/InitPlanetParams.js";
-//        List<ScriptEngineFactory> list = factory.getEngineFactories();
-//        System.out.println("Script Engines found: ");
-//        for(ScriptEngineFactory f: list){
-//            System.out.println(" Name = " + f.getEngineName()
-//                    + " language = " + f.getLanguageName()
-//                    + " extensions = " + f.getExtensions());
-//        }
-//        //get JS engine
-//        jsEngine = factory.getEngineByName("js");
-//        //run script
-//        ((MyGame) game).executeScript(jsEngine, scriptFileName);
+        ScriptEngineManager factory = new ScriptEngineManager();
+        String scriptFileName = "src/Scripts/InitPlanetParams.js";
+        List<ScriptEngineFactory> list = factory.getEngineFactories();
+        System.out.println("Script Engines found: ");
+        for(ScriptEngineFactory f: list){
+            System.out.println(" Name = " + f.getEngineName()
+                    + " language = " + f.getLanguageName()
+                    + " extensions = " + f.getExtensions());
+        }
+        //get JS engine
+        jsEngine = factory.getEngineByName("js");
+        //run script
+        ((MyGame) game).executeScript(jsEngine, scriptFileName);
 
         try {
             game.startup();
@@ -346,8 +347,8 @@ public class MyGame extends VariableFrameRateGame {
         BounceController bc = new BounceController();
 
         //================ Terrian ==================================
-        Tessellation tessE = sm.createTessellation("tessE", 9);
-        tessE.setSubdivisions(32f);
+        Tessellation tessE = sm.createTessellation("tessE", 5);
+        tessE.setSubdivisions(16f);
         SceneNode tessN =
                 sm.getRootSceneNode().
                         createChildSceneNode("TessN");
@@ -356,8 +357,8 @@ public class MyGame extends VariableFrameRateGame {
         tessE.setHeightMap(this.getEngine(), "floor3.png");
         tessE.setTexture(this.getEngine(), "grass.jpg");
 
-        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 9);
-        tessWaterE.setSubdivisions(32f);
+        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 5);
+        tessWaterE.setSubdivisions(16f);
         SceneNode tessWaterN =
                 sm.getRootSceneNode().
                         createChildSceneNode("TessWaterN");
@@ -525,6 +526,7 @@ public class MyGame extends VariableFrameRateGame {
         orbitController.updateCameraPosition();
         updateGhostPosition();
         processNetworking(elapsTime);
+        updateVerticalPosition();
     }
 
     protected void setupInputs(){
