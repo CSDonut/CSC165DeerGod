@@ -59,7 +59,6 @@ public class MyGame extends VariableFrameRateGame {
     private ProtocolClient protClient;
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
-    private int test;
 
     GL4RenderSystem rs;
     float elapsTime = 0.0f;
@@ -77,6 +76,7 @@ public class MyGame extends VariableFrameRateGame {
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
     Entity [] planets;
     Entity alienArtifactsE;
+    private boolean done = true;
 
 
     public MyGame(String serverAddr, int sPort) {
@@ -298,6 +298,40 @@ public class MyGame extends VariableFrameRateGame {
                 sm.getRootSceneNode().createChildSceneNode("rockNode");
         rockNode.attachObject(rock);
 
+        //============ Grass ==========================================================
+
+        Entity grassE = sm.createEntity("grassblade","grass.obj");
+        Texture grasstex = sm.getTextureManager().getAssetByPath("grassblade.png");
+        TextureState grassState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        grassState.setTexture(grasstex);
+        grassE.setRenderState(grassState);
+
+        SceneNode grassNode =
+                sm.getRootSceneNode().createChildSceneNode("grassNode");
+        grassNode.attachObject(grassE);
+        grassNode.setLocalScale(2,1f,2);
+        grassNode.setLocalPosition(10,.8f ,10);
+
+//        SkeletalEntity grassE1 = sm.createSkeletalEntity("grassE1","Grass.rkm","Grass.rks");
+//        Texture grasstexOne = sm.getTextureManager().getAssetByPath("grassblade.png");
+//        TextureState grassStateOne = (TextureState) sm.getRenderSystem()
+//                .createRenderState(RenderState.Type.TEXTURE);
+//        grassStateOne.setTexture(grasstexOne);
+//        grassE1.setRenderState(grassStateOne);
+
+//        SceneNode grassNode1 =
+//                sm.getRootSceneNode().createChildSceneNode("grassNode1");
+//        grassNode1.attachObject(grassE1);
+//        grassNode1.setLocalScale(.1f,.1f,.1f);
+//        grassNode.yaw(Degreef.createFrom(90.0f));
+//        grassNode1.setLocalPosition(5,.8f ,5);
+//
+//        grassE1.loadAnimation("waveAnimation", "Grass.rka");
+
+
+        //=============================================================================
+
         //========= Rock Float =========================================================
         Entity floatIsland = sm.createEntity("floatIsland","FloatIsland3.obj");
         Texture floatText = sm.getTextureManager().getAssetByPath("FloatIsland.png");
@@ -347,18 +381,18 @@ public class MyGame extends VariableFrameRateGame {
         BounceController bc = new BounceController();
 
         //================ Terrian ==================================
-        Tessellation tessE = sm.createTessellation("tessE", 5);
-        tessE.setSubdivisions(16f);
+        Tessellation tessE = sm.createTessellation("tessE", 9);
+        tessE.setSubdivisions(32f);
         SceneNode tessN =
                 sm.getRootSceneNode().
                         createChildSceneNode("TessN");
         tessN.attachObject(tessE);
         tessN.scale(70, 100, 70);
         tessE.setHeightMap(this.getEngine(), "floor3.png");
-        tessE.setTexture(this.getEngine(), "grass.jpg");
+        tessE.setTexture(this.getEngine(), "grassFloor.jpg");
 
-        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 5);
-        tessWaterE.setSubdivisions(16f);
+        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 9);
+        tessWaterE.setSubdivisions(32f);
         SceneNode tessWaterN =
                 sm.getRootSceneNode().
                         createChildSceneNode("TessWaterN");
@@ -526,8 +560,23 @@ public class MyGame extends VariableFrameRateGame {
         orbitController.updateCameraPosition();
         updateGhostPosition();
         processNetworking(elapsTime);
-        updateVerticalPosition();
+//        animationUpdate();
+//        animationStart();
     }
+
+//    private void animationStart() {
+//        if(done){
+//            SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+//            grass.playAnimation("waveAnimation", 0.5f, SkeletalEntity.EndType.LOOP, 0);
+//            done = false;
+//        }
+//
+//    }
+
+//    private void animationUpdate() {
+//        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+//        grass.update();
+//    }
 
     protected void setupInputs(){
         im = new GenericInputManager();
