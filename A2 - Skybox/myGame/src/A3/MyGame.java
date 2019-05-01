@@ -15,6 +15,7 @@ import myGameEngine.Controllers.StretchController;
 import myGameEngine.GamepadCommands.*;
 import myGameEngine.KeyboardCommands.*;
 import myGameEngine.Controllers.Camera3PController;
+import myGameEngine.Physics.*;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import ray.input.GenericInputManager;
@@ -48,6 +49,10 @@ import javax.script.ScriptException;
 import ray.rage.util.*;
 import java.awt.geom.*;
 
+//Physics Engine
+import ray.physics.PhysicsEngine;
+import ray.physics.PhysicsObject;
+import ray.physics.PhysicsEngineFactory;
 
 public class MyGame extends VariableFrameRateGame {
     // to minimize variable allocation in update()
@@ -64,7 +69,6 @@ public class MyGame extends VariableFrameRateGame {
     float elapsTime = 0.0f;
     String elapsTimeStr, planetsVisitedString, dispStr, collectedArtifactsString;
     int elapsTimeSec, planetsVisited = 0, collectedArtifacts = 0;
-    final int MAXPLANETS = 5;
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
@@ -72,19 +76,24 @@ public class MyGame extends VariableFrameRateGame {
     boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
-    SceneNode [] planetN, planetsVisitedN;
-    SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
-    Entity [] planets;
-    Entity alienArtifactsE;
+    SceneNode  playerGroupN;
+
     private boolean done = true;
+    private boolean running = true;
+    private ArrayConversion arrayConversion;
+
+    //Physics engine
+    private PhysicsEngine physicsEng;
+    private RagePhysicsWorld RagePhysicsWorld;
+
 
 
     public MyGame(String serverAddr, int sPort) {
         super();
-        planetsVisitedN = new SceneNode[MAXPLANETS];
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
+        arrayConversion = new ArrayConversion();
         System.out.println("Left joystick on gamepad controls movement");
         System.out.println("Right joystick controls camera controls");
         System.out.println("Triggers control roll");
@@ -137,47 +146,6 @@ public class MyGame extends VariableFrameRateGame {
         cameraN.attachObject(camera);
         camera.setMode('n');
         camera.getFrustum().setFarClipDistance(1000.0f);
-    }
-
-    // now we add setting up viewports in the window
-//    protected void setupWindowViewports(RenderWindow rw) {
-//        rw.addKeyListener(this);
-//        Viewport topViewport = rw.getViewport(0);
-//        topViewport.setDimensions(.51f, .01f, .99f, .49f); // B,L,W,H
-//        topViewport.setClearColor(new Color(1.0f, .7f, .7f));
-//        Viewport botViewport = rw.createViewport(.01f, .01f, .99f, .49f);
-//        botViewport.setClearColor(new Color(.5f, 1.0f, .5f));
-//    }
-
-    protected void checkDistancePlanetToPlayer(Engine engine){
-        float dolphinDistX, dolphinDistY, dolphinDistZ;
-        float cubeDistX, cubeDistY, cubeDistZ;
-        float maxDistance = 4;
-        boolean flag = false;
-        SceneManager sm = engine.getSceneManager();
-        SceneNode dolphinN = sm.getSceneNode("myDolphinNode");
-        SceneNode cubeN = sm.getSceneNode("myCubeNode");
-
-    }
-
-
-    public boolean checkDistanceDolphinCamera(){
-        float DistX, DistY, DistZ;
-        DistX = DistY = DistZ = 0;
-        float maxDistance = 8; // Farthest distance you can get away from the dolphin before it spawns you back on top
-        Camera mainCamN = getEngine().getSceneManager().getCamera("MainCamera");
-        SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myDolphinNode");
-
-
-        if(mainCamN.getMode() == 'c'){
-            DistX = Math.abs(mainCamN.getPo().x() - dolphinN.getLocalPosition().x());
-            DistY = Math.abs(mainCamN.getPo().y() - dolphinN.getLocalPosition().y());
-            DistZ = Math.abs(mainCamN.getPo().z() - dolphinN.getLocalPosition().z());
-
-            if(DistX > maxDistance || DistY > maxDistance || DistZ > maxDistance)
-                return false;
-        }
-        return true;
     }
 
 
@@ -380,7 +348,7 @@ public class MyGame extends VariableFrameRateGame {
         //Bounce Controller
         BounceController bc = new BounceController();
 
-        //================ Terrian ==================================
+        //================ Terrain ==================================
         Tessellation tessE = sm.createTessellation("tessE", 9);
         tessE.setSubdivisions(32f);
         SceneNode tessN =
@@ -400,7 +368,7 @@ public class MyGame extends VariableFrameRateGame {
         tessWaterN.scale(70, 100, 70);
         tessWaterE.setHeightMap(this.getEngine(), "FloorFlat.png");
         tessWaterE.setTexture(this.getEngine(), "blue.jpeg");
-        //=============== Terrian End ================================
+        //=============== Terrain End ================================
 
         sm.addController(rc);
         sm.addController(sc);
@@ -410,9 +378,10 @@ public class MyGame extends VariableFrameRateGame {
         setupInputs();
         //orbitController
         setupOrbitCamera(eng, sm);
-        //dolphinN.yaw(Degreef.createFrom(45.0f));
-        cubeN.yaw(Degreef.createFrom(45.0f));
 
+        cubeN.yaw(Degreef.createFrom(45.0f));
+        initPhysicsSystem();
+        RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         setupNetworking();
 
 
@@ -560,6 +529,19 @@ public class MyGame extends VariableFrameRateGame {
         orbitController.updateCameraPosition();
         updateGhostPosition();
         processNetworking(elapsTime);
+
+        if (running) {
+            Matrix4 mat;
+            physicsEng.update(elapsTime);
+            for (SceneNode s : engine.getSceneManager().getSceneNodes()) {
+                if (s.getPhysicsObject() != null) {
+                    mat = Matrix4f.createFrom(arrayConversion.toFloatArray(
+                            s.getPhysicsObject().getTransform()));
+                    s.setLocalPosition(mat.value(0, 3), mat.value(1, 3),
+                            mat.value(2, 3));
+                }
+            }
+        }
 //        animationUpdate();
 //        animationStart();
     }
@@ -684,4 +666,11 @@ public class MyGame extends VariableFrameRateGame {
     { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
     }
 
+    public void initPhysicsSystem(){
+        String engine = "ray.physics.JBullet.JBulletPhysicsEngine";
+        float[] gravity = {0, -3f, 0};
+        physicsEng = PhysicsEngineFactory.createPhysicsEngine(engine);
+        physicsEng.initSystem();
+        physicsEng.setGravity(gravity);
+    }
 }
