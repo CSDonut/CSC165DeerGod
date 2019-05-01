@@ -3,6 +3,7 @@ package A3;
 import java.awt.*;
 import java.io.*;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
@@ -17,6 +18,7 @@ import myGameEngine.Controllers.Camera3PController;
 import net.java.games.input.Component;
 import net.java.games.input.Controller;
 import ray.input.GenericInputManager;
+import ray.input.action.AbstractInputAction;
 import ray.rage.*;
 import ray.rage.asset.texture.*;
 import ray.rage.game.*;
@@ -26,6 +28,7 @@ import ray.rage.rendersystem.shader.GpuShaderProgram;
 import ray.rage.rendersystem.states.FrontFaceState;
 import ray.rage.rendersystem.states.RenderState;
 import ray.rage.rendersystem.states.TextureState;
+import ray.rage.rendersystem.states.ZBufferState;
 import ray.rage.scene.*;
 import ray.rage.scene.Camera.Frustum.*;
 import ray.rage.scene.controllers.*;
@@ -34,10 +37,6 @@ import ray.rml.*;
 import ray.rage.rendersystem.gl4.GL4RenderSystem;
 import ray.input.*;
 import ray.networking.IGameConnection.ProtocolType;
-
-import ray.rage.util.*;
-
-import java.awt.geom.*;
 import java.util.List;
 
 //Script imports
@@ -45,6 +44,9 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import ray.rage.util.*;
+import java.awt.geom.*;
 
 
 public class MyGame extends VariableFrameRateGame {
@@ -62,16 +64,19 @@ public class MyGame extends VariableFrameRateGame {
     float elapsTime = 0.0f;
     String elapsTimeStr, planetsVisitedString, dispStr, collectedArtifactsString;
     int elapsTimeSec, planetsVisited = 0, collectedArtifacts = 0;
-
+    final int MAXPLANETS = 5;
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
+    private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
+    boolean ghostListEmpty = true;
+    static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode [] planetN, planetsVisitedN;
     SceneNode planetGroupN, playerGroupN, StretchGroupN,BounceGroupN;
     Entity [] planets;
-    final int MAXPLANETS = 5;
-    static protected ScriptEngine jsEngine;
+    Entity alienArtifactsE;
+    private boolean done = true;
 
 
     public MyGame(String serverAddr, int sPort) {
@@ -80,14 +85,16 @@ public class MyGame extends VariableFrameRateGame {
         this.serverAddress = serverAddr;
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
-
-
+        System.out.println("Left joystick on gamepad controls movement");
+        System.out.println("Right joystick controls camera controls");
+        System.out.println("Triggers control roll");
+        System.out.println("Y button controls camera toggle");
+        System.out.println("Start button ends game");
 
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.5", Integer.parseInt("56000"));
-        //Script code
+        Game game = new MyGame("10.117.119.67", Integer.parseInt("59000"));
         ScriptEngineManager factory = new ScriptEngineManager();
         String scriptFileName = "src/Scripts/InitPlanetParams.js";
         List<ScriptEngineFactory> list = factory.getEngineFactories();
@@ -130,14 +137,6 @@ public class MyGame extends VariableFrameRateGame {
         cameraN.attachObject(camera);
         camera.setMode('n');
         camera.getFrustum().setFarClipDistance(1000.0f);
-
-//        Camera camera2 = sm.createCamera("MainCamera2", Projection.PERSPECTIVE);
-//        rw.getViewport(1).setCamera(camera2);
-//        SceneNode cameraN2 =
-//                rootNode.createChildSceneNode("MainCamera2Node");
-//        cameraN2.attachObject(camera2);
-//        camera2.setMode('n');
-//        camera2.getFrustum().setFarClipDistance(1000.0f);
     }
 
     // now we add setting up viewports in the window
@@ -158,39 +157,6 @@ public class MyGame extends VariableFrameRateGame {
         SceneManager sm = engine.getSceneManager();
         SceneNode dolphinN = sm.getSceneNode("myDolphinNode");
         SceneNode cubeN = sm.getSceneNode("myCubeNode");
-
-
-        for(int i = 0; i <  MAXPLANETS; i++){
-            dolphinDistX = Math.abs(planetN[i].getLocalPosition().x() - dolphinN.getLocalPosition().x());
-            dolphinDistY = Math.abs(planetN[i].getLocalPosition().y() - dolphinN.getLocalPosition().y());
-            dolphinDistZ = Math.abs(planetN[i].getLocalPosition().z() - dolphinN.getLocalPosition().z());
-            cubeDistX = Math.abs(planetN[i].getLocalPosition().x() - cubeN.getLocalPosition().x());
-            cubeDistY = Math.abs(planetN[i].getLocalPosition().y() - cubeN.getLocalPosition().y());
-            cubeDistZ = Math.abs(planetN[i].getLocalPosition().z() - cubeN.getLocalPosition().z());
-
-            //Checks to see if you have visited a planet, if not, increment planetsvisited if you are close enough
-            if(!(planetN[i] == planetsVisitedN[i])) {
-                for(Node node : StretchGroupN.getChildNodes()){
-                    if (dolphinDistX < maxDistance && dolphinDistY < maxDistance && dolphinDistZ < maxDistance) {
-                        planetsVisitedN[i] = planetN[i];
-                        planetN[i] = StretchGroupN.createChildSceneNode("StretchPlanetN" + i);
-                        StretchGroupN.attachObject(planets[i]);
-                        planetN[i].notifyAttached(StretchGroupN);
-                        planetsVisited++;
-                    }
-                }
-
-//                } else if (cubeDistX < maxDistance && cubeDistY < maxDistance && cubeDistZ < maxDistance) {
-//                    planetsVisitedN[i] = planetN[i];
-//                    planetN[i] = BounceGroupN.createChildSceneNode("BouncePlanetN " + i);
-//                    BounceGroupN.attachObject(planets[i]);
-//                    planetN[i].notifyAttached(BounceGroupN);
-//                    planetsVisited++;
-//                }
-            }
-        }
-
-
 
     }
 
@@ -224,8 +190,9 @@ public class MyGame extends VariableFrameRateGame {
         TextureState state = (TextureState)rs.createRenderState(RenderState.Type.TEXTURE);
         Angle rotAmt = Degreef.createFrom(180.0f);
         ManualObject manObjGroundPlane;
+        ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
+        zstate.setTestEnabled(true);
 
-        // prepare the script engine
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
 
@@ -237,12 +204,12 @@ public class MyGame extends VariableFrameRateGame {
         // set up sky box
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
-        Texture front = tm.getAssetByPath("front.jpg");
-        Texture back = tm.getAssetByPath("back.jpg");
-        Texture left = tm.getAssetByPath("left.jpg");
-        Texture right = tm.getAssetByPath("right.jpg");
-        Texture top = tm.getAssetByPath("top.jpg");
-        Texture bottom = tm.getAssetByPath("bottom.jpg");
+        Texture front = tm.getAssetByPath("front.png");
+        Texture back = tm.getAssetByPath("back.png");
+        Texture left = tm.getAssetByPath("left.png");
+        Texture right = tm.getAssetByPath("right.png");
+        Texture top = tm.getAssetByPath("top.png");
+        Texture bottom = tm.getAssetByPath("bottom.png");
         tm.setBaseDirectoryPath(conf.valueOf("assets.textures.path"));
 // cubemap textures are flipped upside-down.
 // All textures must have the same dimensions, so any image’s
@@ -266,53 +233,17 @@ public class MyGame extends VariableFrameRateGame {
         sm.setActiveSkyBox(sb);
 //End skybox
 
-        //Stretch planet group
-        StretchGroupN = sm.getRootSceneNode().createChildSceneNode("StretchGroupNode");
-        //Bounce planet group
-        BounceGroupN = sm.getRootSceneNode().createChildSceneNode("BounceGroupNode");
-
-        //Planet code
-        planets = new Entity[MAXPLANETS];
-        planetN = new SceneNode[MAXPLANETS];
-        planetGroupN = sm.getRootSceneNode().createChildSceneNode("planetGroupNode");
-
-        for(int i = 0; i < MAXPLANETS; i++){
-            planets[i] = sm.createEntity("Planet" + i , "earth.obj");
-            planets[i].setPrimitive(Primitive.TRIANGLES);
-            planetN[i] = planetGroupN.createChildSceneNode(planets[i].getName() + "Node");
-            planetN[i].moveForward((float)new Random().nextInt(50));
-            planetN[i].moveBackward((float)new Random().nextInt(50));
-            planetN[i].moveLeft((float)new Random().nextInt(10));
-            planetN[i].moveRight((float)new Random().nextInt(10));
-            planetN[i].attachObject(planets[i]);
-        }
-
-
 //        manObjGroundPlane = makePlane(eng, sm);
 //        manObjGroundPlane.setPrimitive(Primitive.TRIANGLES);
 //        SceneNode groundPlaneN = sm.getRootSceneNode().createChildSceneNode("groundPlaneN");
 //        groundPlaneN.attachObject(manObjGroundPlane);
-//        groundPlaneN.scale((float)40.0, (float)40.0, (float)40.0);
+//        groundPlaneN.scale((float)20.0, (float)1.0, (float)20.0);
 
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
-        //Dolphin code
-        Entity dolphinE = sm.createEntity("myDolphin", "dolphinHighPoly.obj");
-        dolphinE.setPrimitive(Primitive.TRIANGLES);
-//        Camera camera = sm.getCamera("MainCamera");
-
-        SceneNode dolphinN = playerGroupN.createChildSceneNode("myDolphinNode");
-        dolphinN.moveBackward(3.0f);
-        dolphinN.attachObject(dolphinE);
-//        dolphinN.yaw(rotAmt);
-
-        SceneNode dolphCamNode = dolphinN.createChildSceneNode("DolphCamNode");
-        //dolphCamNode.attachObject(camera);
-        //dolphCamNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
 
         //Cube code
         Entity cubeE = sm.createEntity("myCube", "cube.obj");
         cubeE.setPrimitive(Primitive.TRIANGLES);
-        //Camera camera2 = sm.getCamera("MainCamera2");
 
         SceneNode cubeN = playerGroupN.createChildSceneNode("myCubeNode");
         cubeN.moveBackward(5.0f);
@@ -324,22 +255,123 @@ public class MyGame extends VariableFrameRateGame {
 //        CubeNode.attachObject(camera2);
         //CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
 
+        //Blender Tree =============================================================
+        Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
+        Texture tex = sm.getTextureManager().getAssetByPath("treeTexture.png");
+        TextureState tstate = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        tstate.setTexture(tex);
+        treeOne.setRenderState(tstate);
+        treeOne.setRenderState(zstate);
 
+        SceneNode manN =
+                sm.getRootSceneNode().createChildSceneNode("treeNode");
+        manN.attachObject(treeOne);
+        manN.scale(0.5f, 0.5f, 0.5f);
+        manN.translate(0f, 0.0f, .5f);
+
+        //=====Rock Border===========================================================
+        Entity borderOne = sm.createEntity("Border","Border.obj");
+        Texture borderTex = sm.getTextureManager().getAssetByPath("Border.png");
+        TextureState Bstate = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        Bstate.setTexture(borderTex);
+        borderOne.setRenderState(Bstate);
+
+        SceneNode borderNode =
+                sm.getRootSceneNode().createChildSceneNode("borderNode");
+        borderNode.attachObject(borderOne);
+        borderNode.scale(2.f, 2.0f, 2.0f);
+        borderNode.translate(15f, 0.0f, 10f);
+        borderNode.yaw(Degreef.createFrom(90));
+
+        //===========Cystral Rocks============================================================
+
+        Entity rock = sm.createEntity("rock1","Rock2.obj");
+        Texture rocktex = sm.getTextureManager().getAssetByPath("rock.jpg");
+        TextureState Rstate = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        Rstate.setTexture(rocktex);
+        rock.setRenderState(Rstate);
+
+        SceneNode rockNode =
+                sm.getRootSceneNode().createChildSceneNode("rockNode");
+        rockNode.attachObject(rock);
+
+        //============ Grass ==========================================================
+
+        Entity grassE = sm.createEntity("grassblade","grass.obj");
+        Texture grasstex = sm.getTextureManager().getAssetByPath("grassblade.png");
+        TextureState grassState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        grassState.setTexture(grasstex);
+        grassE.setRenderState(grassState);
+
+        SceneNode grassNode =
+                sm.getRootSceneNode().createChildSceneNode("grassNode");
+        grassNode.attachObject(grassE);
+        grassNode.setLocalScale(2,1f,2);
+        grassNode.setLocalPosition(10,.8f ,10);
+
+//        SkeletalEntity grassE1 = sm.createSkeletalEntity("grassE1","Grass.rkm","Grass.rks");
+//        Texture grasstexOne = sm.getTextureManager().getAssetByPath("grassblade.png");
+//        TextureState grassStateOne = (TextureState) sm.getRenderSystem()
+//                .createRenderState(RenderState.Type.TEXTURE);
+//        grassStateOne.setTexture(grasstexOne);
+//        grassE1.setRenderState(grassStateOne);
+
+//        SceneNode grassNode1 =
+//                sm.getRootSceneNode().createChildSceneNode("grassNode1");
+//        grassNode1.attachObject(grassE1);
+//        grassNode1.setLocalScale(.1f,.1f,.1f);
+//        grassNode.yaw(Degreef.createFrom(90.0f));
+//        grassNode1.setLocalPosition(5,.8f ,5);
+//
+//        grassE1.loadAnimation("waveAnimation", "Grass.rka");
+
+
+        //=============================================================================
+
+        //========= Rock Float =========================================================
+        Entity floatIsland = sm.createEntity("floatIsland","FloatIsland3.obj");
+        Texture floatText = sm.getTextureManager().getAssetByPath("FloatIsland.png");
+        TextureState floatState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        floatState.setTexture(floatText);
+        floatIsland.setRenderState(floatState);
+
+        SceneNode floatIslandNode =
+                sm.getRootSceneNode().createChildSceneNode("floatIslandNode");
+        floatIslandNode.attachObject(floatIsland);
+        floatIslandNode.setLocalScale(7,7,7);
+        floatIslandNode.setLocalPosition(0,-2.5f,0);
+        //========= Rock Float End =========================================================
 
 
         //Light code
-        sm.getAmbientLight().setIntensity(new Color(.1f, .1f, .1f));
+        sm.getAmbientLight().setIntensity(new Color(.0f, .0f, .0f));
 
-        Light plight = sm.createLight("testLamp1", Light.Type.POINT);
-        plight.setAmbient(new Color(.3f, .3f, .3f));
-        plight.setDiffuse(new Color(.7f, .7f, .7f));
-        plight.setSpecular(new Color(1.0f, 1.0f, 1.0f));
-        plight.setRange(5f);
+        //===========Light Sorce Modle================================
 
-        SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
-        plightNode.attachObject(plight);
+        Light plight2 = sm.createLight("testLamp2", Light.Type.DIRECTIONAL);
+        plight2.setAmbient(new Color(.2f, .2f, .2f));
+        plight2.setDiffuse(new Color(1.0f, 1.0f, 1.0f));
+        plight2.setSpecular(new Color(1.0f, 1.0f, 1.0f));
+        plight2.setRange(100f);
 
-        //Rotation code, uses engine
+        SceneNode plightNode2 = sm.getRootSceneNode().createChildSceneNode("plightNode2");
+        plightNode2.attachObject(plight2);
+        plightNode2.setLocalPosition(10,10,-10);
+
+
+        Entity testLight = sm.createEntity("lightCube", "cube.obj");
+        testLight.setPrimitive(Primitive.TRIANGLES);
+        plightNode2.scale(.3f,.3f,.3f);
+
+        plightNode2.attachObject(testLight);
+
+
+        //Rotation code
         RotationController rc = new RotationController(Vector3f.createUnitVectorY(), ((Double)(jsEngine.get("spinSpeed"))).floatValue());
 
         //Stretch controller
@@ -348,27 +380,67 @@ public class MyGame extends VariableFrameRateGame {
         //Bounce Controller
         BounceController bc = new BounceController();
 
+        //================ Terrian ==================================
+        Tessellation tessE = sm.createTessellation("tessE", 9);
+        tessE.setSubdivisions(32f);
+        SceneNode tessN =
+                sm.getRootSceneNode().
+                        createChildSceneNode("TessN");
+        tessN.attachObject(tessE);
+        tessN.scale(70, 100, 70);
+        tessE.setHeightMap(this.getEngine(), "floor3.png");
+        tessE.setTexture(this.getEngine(), "grassFloor.jpg");
 
+        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 9);
+        tessWaterE.setSubdivisions(32f);
+        SceneNode tessWaterN =
+                sm.getRootSceneNode().
+                        createChildSceneNode("TessWaterN");
+        tessWaterN.attachObject(tessWaterE);
+        tessWaterN.scale(70, 100, 70);
+        tessWaterE.setHeightMap(this.getEngine(), "FloorFlat.png");
+        tessWaterE.setTexture(this.getEngine(), "blue.jpeg");
+        //=============== Terrian End ================================
 
-        for(int i = 0; i < MAXPLANETS; i++)
-            rc.addNode(planetN[i]);
-
-        sc.addNode(StretchGroupN);
-        sc.addNode(BounceGroupN);
         sm.addController(rc);
         sm.addController(sc);
         sm.addController(bc);
 
-        setupInputs();
 
+        setupInputs();
         //orbitController
         setupOrbitCamera(eng, sm);
-        dolphinN.yaw(Degreef.createFrom(45.0f));
+        //dolphinN.yaw(Degreef.createFrom(45.0f));
         cubeN.yaw(Degreef.createFrom(45.0f));
 
         setupNetworking();
 
 
+    }
+
+    public void updateVerticalPosition(){
+        SceneNode avatarN = this.getEngine().getSceneManager().
+                getSceneNode("myCubeNode");
+        SceneNode tessN =
+                this.getEngine().getSceneManager().
+                        getSceneNode("TessN");
+        Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
+
+        Vector3 worldAvatarPosition = avatarN.getWorldPosition();
+        Vector3 localAvatarPosition = avatarN.getLocalPosition();
+
+        Vector3 newAvatarPosition = Vector3f.createFrom(
+                // Keep the X coordinate
+                localAvatarPosition.x(),
+                // The Y coordinate is the varying height
+                tessE.getWorldHeight(
+                        worldAvatarPosition.x() + .3f,
+                        worldAvatarPosition.z()) + .3f,
+                //Keep the Z coordinate
+                localAvatarPosition.z()
+        );
+
+        avatarN.setLocalPosition(newAvatarPosition);
     }
 
     //============= Networking ==========================================
@@ -408,144 +480,68 @@ public class MyGame extends VariableFrameRateGame {
 
     public void addGhostAvatarToGameWorld(GhostAvatar avatar)
             throws IOException
-    { if (avatar != null)
-    { Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "whatever.obj");
+    { if (avatar != null) {
+        ghostList.add(avatar);
+        ghostListEmpty = false;
+        Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "dolphinHighPoly.obj");
         ghostE.setPrimitive(Primitive.TRIANGLES);
         SceneNode ghostN = getEngine().getSceneManager().getRootSceneNode().
                 createChildSceneNode(avatar.getId().toString());
+        System.out.println(avatar.getId());
         ghostN.attachObject(ghostE);
-        ghostN.setLocalPosition(0, 0 ,0);
+        ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
         avatar.setEntity(ghostE);
-        avatar.setPosition(0,0,0);
+        //avatar.setPosition(0,0,0);
+
     } }
-        //tst
+
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
+    }
+
+    public void setIsConnected(boolean b) {
+        isClientConnected = b;
+    }
+
+    public ProtocolClient getProtClient() {
+        return protClient;
+    }
+
+    public boolean getisClientConnected() {
+        return isClientConnected;
+    }
+
+    public void updateGhostPosition(){
+
+        if(!ghostListEmpty){
+           Iterator<GhostAvatar> iterate = ghostList.iterator();
+           while (iterate.hasNext()){
+               GhostAvatar temp = iterate.next();
+               temp.getNode().setLocalPosition(temp.getPos());
+           }
+        }
     }
 
     //============ END Networking =====================================
 
 
     protected void setupOrbitCamera(Engine eng, SceneManager sm) {
-//        SceneNode dolphinN = sm.getSceneNode("myDolphinNode");
-//        SceneNode cameraN = sm.getSceneNode("MainCameraNode");
-//        Camera camera = sm.getCamera("MainCamera");
-//        String msName = im.getMouseName();
-//        orbitController = new Camera3PController(camera, cameraN, dolphinN, msName, im);
-
+        String gpName;
         SceneNode cubeN = sm.getSceneNode("myCubeNode");
         SceneNode cameraN = sm.getSceneNode("MainCameraNode");
         Camera camera = sm.getCamera("MainCamera");
-        String gpName = im.getFirstGamepadName();
+        if(im.getFirstGamepadName() == null){
+            gpName = im.getMouseName();
+        }else{
+            gpName = im.getFirstGamepadName();
+        }
+
         orbitController = new Camera3PController(camera, cameraN, cubeN, gpName, im);
 
     }
 
 
-
-    protected ManualObject makePlane(Engine eng, SceneManager sm) throws IOException {
-        ManualObject line = sm.createManualObject("GroundPlane");
-        ManualObjectSection lineSec =
-                line.createManualSection("LineSelection");
-        line.setGpuShaderProgram(sm.getRenderSystem().
-                getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
-
-        float[] vertices = new float[]{
-                -1.0f, -0.01f, 1.0f, 1.0f,  -0.01f, 1.0f, -1.0f,   -0.01f, -1.0f,
-                -1.0f,  -0.01f, -1.0f, 1.0f,   -0.01f, 1.0f, -1.0f,    -0.01f, 1.0f, //UF
-                1.0f,    -0.01f, -1.0f, -1.0f,   -0.01f, -1.0f, 1.0f,    -0.01f, 1.0f,
-                1.0f,    -0.01f, 1.0f, -1.0f,    -0.01f, -1.0f, 1.0f,    -0.01f, -1.0f //UR
-        };
-
-        float[] texcoords = new float[]{
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,0.0f, 0.0f, 1.0f,
-        };
-
-        float[] normals = new float[]{
-                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-
-        };
-
-        int[] indices = new int[] {0,1,2,3,4,5,6,7,8,9,10,11};
-        FloatBuffer vertBuf = BufferUtil.directFloatBuffer(vertices);
-        FloatBuffer texBuf = BufferUtil.directFloatBuffer(texcoords);
-        FloatBuffer normBuf = BufferUtil.directFloatBuffer(normals);
-        IntBuffer indexBuf = BufferUtil.directIntBuffer(indices);
-        lineSec.setVertexBuffer(vertBuf);
-        lineSec.setTextureCoordsBuffer(texBuf);
-        lineSec.setNormalsBuffer(normBuf);
-        lineSec.setIndexBuffer(indexBuf);
-        Texture tex =
-                eng.getTextureManager().getAssetByPath("chain-fence.jpeg");
-        TextureState texState = (TextureState)sm.getRenderSystem().
-                createRenderState(RenderState.Type.TEXTURE);
-        texState.setTexture(tex);
-        FrontFaceState faceState = (FrontFaceState) sm.getRenderSystem().
-                createRenderState(RenderState.Type.FRONT_FACE);
-        line.setDataSource(DataSource.INDEX_BUFFER);
-        line.setRenderState(texState);
-        line.setRenderState(faceState);
-        return line;
-    }
-
-    protected ManualObject makePyramid(Engine eng, SceneManager sm)
-            throws IOException
-    { ManualObject pyr = sm.createManualObject("Pyramid");
-        ManualObjectSection pyrSec =
-                pyr.createManualSection("PyramidSection");
-        pyr.setGpuShaderProgram(sm.getRenderSystem().
-                getGpuShaderProgram(GpuShaderProgram.Type.RENDERING));
-        float[] vertices = new float[]
-                { -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //front
-                        1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //right
-                        1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, //back
-                        -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 0.0f, //left
-                        0.0f, -2.0f, 0.0f,1.0f, -1.0f, 1.0f,-1.0f, -1.0f, 1.0f, //bottom front
-                        0.0f, -2.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, //bottom right
-                        0.0f, -2.0f, 0.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, //bottom left
-                        0.0f, -2.0f, 0.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f //bottom back
-
-                };
-        float[] texcoords = new float[]
-                { 0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f, 0.5f, 1.0f
-                };
-        float[] normals = new float[]
-                { 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f,
-                        -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f, -1.0f, 1.0f, 0.0f
-                };
-        int[] indices = new int[] { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18, 19, 20, 21, 22, 23, 24, 25, 26};
-        FloatBuffer vertBuf = BufferUtil.directFloatBuffer(vertices);
-        FloatBuffer texBuf = BufferUtil.directFloatBuffer(texcoords);
-        FloatBuffer normBuf = BufferUtil.directFloatBuffer(normals);
-        IntBuffer indexBuf = BufferUtil.directIntBuffer(indices);
-        pyrSec.setVertexBuffer(vertBuf);
-        pyrSec.setTextureCoordsBuffer(texBuf);
-        pyrSec.setNormalsBuffer(normBuf);
-        pyrSec.setIndexBuffer(indexBuf);
-        Texture tex =
-                eng.getTextureManager().getAssetByPath("red.jpeg");
-        TextureState texState = (TextureState)sm.getRenderSystem().
-                createRenderState(RenderState.Type.TEXTURE);
-        texState.setTexture(tex);
-        FrontFaceState faceState = (FrontFaceState) sm.getRenderSystem().
-                createRenderState(RenderState.Type.FRONT_FACE);
-        pyr.setDataSource(DataSource.INDEX_BUFFER);
-        pyr.setRenderState(texState);
-        pyr.setRenderState(faceState);
-        return pyr;
-    }
     @Override
     protected void update(Engine engine) {
         // build and set HUD
@@ -556,21 +552,37 @@ public class MyGame extends VariableFrameRateGame {
         elapsTimeStr = Integer.toString(elapsTimeSec);
         planetsVisitedString = Integer.toString(planetsVisited);
         collectedArtifactsString= Integer.toString(collectedArtifacts);
-        dispStr = "Cube Time = " + elapsTimeStr;
+        dispStr = "Cube position " + elapsTimeStr;
         rs.setHUD(dispStr, 15, 15);
         dispStr = "Dolphin Time = " + elapsTimeStr;
         rs.setHUD2(dispStr, 15, (rs.getRenderWindow().getViewport(0).getActualHeight() + 20));
         im.update(elapsTime);
         orbitController.updateCameraPosition();
-//        orbitController2.updateCameraPosition();
+        updateGhostPosition();
         processNetworking(elapsTime);
+//        animationUpdate();
+//        animationStart();
     }
+
+//    private void animationStart() {
+//        if(done){
+//            SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+//            grass.playAnimation("waveAnimation", 0.5f, SkeletalEntity.EndType.LOOP, 0);
+//            done = false;
+//        }
+//
+//    }
+
+//    private void animationUpdate() {
+//        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+//        grass.update();
+//    }
 
     protected void setupInputs(){
         im = new GenericInputManager();
         //Creating action objects
-        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this);
-        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this);
+        MoveForwardBackwardAction moveForwardBackwardCmd = new MoveForwardBackwardAction(this, protClient);
+        MoveLeftRightAction moveLeftRightCmd = new MoveLeftRightAction(this,protClient);
         QuitGameAction quitGameCmd = new QuitGameAction(this);
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
@@ -584,6 +596,7 @@ public class MyGame extends VariableFrameRateGame {
             if (c.getType() == Controller.Type.KEYBOARD) {
                 //Quit game action using q key on keyboard
                 im.associateAction(c, Component.Identifier.Key.Q, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+
 
                 //move forward action using key W on keyboard
                 im.associateAction(c, Component.Identifier.Key.W, new KBMoveForwardAction(this), InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
@@ -633,9 +646,6 @@ public class MyGame extends VariableFrameRateGame {
         }
     }
 
-    public void setIsConnected(boolean b) {
-        isClientConnected = b;
-    }
 
     private void executeScript(ScriptEngine engine, String scriptFileName)
     {
@@ -673,4 +683,5 @@ public class MyGame extends VariableFrameRateGame {
     catch (NullPointerException e4)
     { System.out.println ("Null ptr exception reading " + scriptFile + e4); }
     }
+
 }

@@ -11,7 +11,7 @@ public class CameraYawAction extends AbstractInputAction{
     private Camera camera;
     private SceneNode cubeN;
     private MyGame obj;
-    private float speedScaleInvert = -4; //The higher the number, the slower the objects move, negative to invert yaw
+    private float speedScaleInvert = -1; //The higher the number, the slower the objects move, negative to invert yaw
     private float speedScale = 4; //The higher the number, the slower the objects move
 
     Angle yawAmt, yawAmtInv;

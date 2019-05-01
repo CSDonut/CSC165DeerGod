@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d419c9af-250a-4554-bb1b-2dcef7a38cc4" name="Default Changelist" comment="" />
+    <list default="true" id="4b065079-6602-4234-b123-3a61dc23b24b" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,31 +13,30 @@
     <session id="910602857">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
-          <entry key="project.open.time.7" value="1" />
+          <entry key="project.open.time.3" value="1" />
           <entry key="project.opened" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="699" />
-          <entry key="js" value="44" />
+          <entry key="java" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="699" />
-          <entry key="JavaScript" value="44" />
+          <entry key="JAVA" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="js" value="1" />
+          <entry key="class" value="5" />
+          <entry key="java" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JavaScript" value="1" />
+          <entry key="CLASS" value="5" />
+          <entry key="JAVA" value="5" />
         </counts>
       </usages-collector>
     </session>
@@ -47,96 +46,29 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/A3/MyGame.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="56" column="38" lean-forward="true" selection-start-line="56" selection-start-column="38" selection-end-line="56" selection-end-column="38" />
-              <folding>
-                <element signature="e#27987#27988#0" expanded="true" />
-                <element signature="e#28024#28025#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="594">
+              <caret line="118" column="9" lean-forward="true" selection-start-line="118" selection-start-column="9" selection-end-line="118" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-        <option value="JavaScript File" />
-      </list>
-    </option>
-  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>controller</find>
-      <find>action</find>
-      <find>checkdistanc</find>
-      <find>mydolphinnode</find>
-      <find>color</find>
-      <find>setupinputs</find>
-      <find>.tostring</find>
-      <find>main</find>
-      <find>setuporbitcamera</find>
-      <find>viewpo</find>
-      <find>orbitradias</find>
-      <find>setupOrbitCamera</find>
-      <find>myDolphinNode</find>
-      <find>Camera2N</find>
-      <find>CubeCamNode</find>
-      <find>MainCamera2</find>
-      <find>MainCamera</find>
-      <find>DolphCamNode</find>
-      <find>setupwindowview</find>
-      <find>orbitcontroller</find>
-      <find>initp</find>
+      <find>gameObjectsToRemove</find>
+      <find>createGhostAvatar</find>
+      <find>ghostavatar</find>
+      <find>vector</find>
+      <find>create</find>
     </findStrings>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/myGameEngine/StretchController.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/SpinController.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/OrbitController/Camera3PController.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/MoveForwardBackwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBMoveBackwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBMoveRightAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBMoveLeftAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBMoveForwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBCameraYawLeftAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBCameraYawAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBCameraPitchUpAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KBCameraPitchDownAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/ToggleCameraAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/CheckGlobalPosition.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/MoveLeftRightAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraPitchAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraTiltAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraYawAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraPitchDownAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraPitchUpAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraYawAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraYawLeftAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveBackwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveForwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveRightAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveLeftAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/Controllers/SpinController.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/Controllers/BounceController.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/GamepadCommands/MoveForwardBackwardAction.java" />
-        <option value="$PROJECT_DIR$/src/myGameEngine/Controllers/Camera3PController.java" />
-        <option value="$PROJECT_DIR$/src/A2/MyGame.java" />
-        <option value="$PROJECT_DIR$/src/Network/NetworkingDriver.java" />
-        <option value="$PROJECT_DIR$/src/Network/GameServerUDP.java" />
-        <option value="$PROJECT_DIR$/src/Network/NetworkingServer.java" />
-        <option value="$PROJECT_DIR$/src/Network/Server/NetworkingServer.java" />
-        <option value="$PROJECT_DIR$/src/Network/Client/GhostAvatar.java" />
-        <option value="$PROJECT_DIR$/src/Network/Server/GameServerUDP.java" />
         <option value="$PROJECT_DIR$/src/Network/Client/ProtocolClient.java" />
-        <option value="$PROJECT_DIR$/src/Scripts/InitPlanetParams.js" />
+        <option value="$PROJECT_DIR$/src/Network/Server/GameServerUDP.java" />
+        <option value="$PROJECT_DIR$/src/Network/Client/GhostAvatar.java" />
         <option value="$PROJECT_DIR$/src/A3/MyGame.java" />
       </list>
     </option>
@@ -147,12 +79,12 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-7" />
-    <option name="width" value="1294" />
-    <option name="height" value="1407" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="6" />
+    <option name="y" value="-56" />
+    <option name="width" value="2696" />
+    <option name="height" value="1664" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -212,21 +144,14 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556590081815" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../A3/MyGame" />
-    <property name="settings.editor.selected.configurable" value="vcs.Git" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="myGameEngine" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Dony Nguyen\Documents\GitHub\CSC165DeerGod\A2 - Skybox\myGame\src\Scripts" />
-      <recent name="C:\Users\Dony Nguyen\Documents\GitHub\CSC165DeerGod\A2 - Skybox\myGame\src" />
-      <recent name="C:\Users\Dony Nguyen\Documents\GitHub\CSC165DeerGod\A2 - Skybox\myGame\src\" />
-      <recent name="C:\Users\Dony Nguyen\Documents\GitHub\CSC165DeerGod\A2 - Skybox\myGame" />
-      <recent name="C:\Users\Dony Nguyen\Documents\GitHub\CSC165DeerGod\A2 - Skybox\myGame\src\A3" />
-    </key>
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1556587100094" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -240,68 +165,66 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.MyGame">
-    <configuration name="MyGame" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="A3.MyGame" />
       <module name="myGame" />
-      <option name="VM_PARAMETERS" value="-Djava.library.path=&quot;C:\javagaming\jinput\lib&quot;" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="A3.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="NetworkServer" type="Application" factoryName="Application">
+    <configuration name="Server" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Network.Server.NetworkingServer" />
       <module name="myGame" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG" factoryName="TestNG">
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.NetworkServer" />
-      <item itemvalue="Application.MyGame" />
+      <item itemvalue="Application.Main" />
+      <item itemvalue="Application.Server" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.MyGame" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="d419c9af-250a-4554-bb1b-2dcef7a38cc4" name="Default Changelist" comment="" />
-      <created>1551677339808</created>
+      <changelist id="4b065079-6602-4234-b123-3a61dc23b24b" name="Default" comment="" />
+      <created>1554391449465</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1551677339808</updated>
-      <workItem from="1551677342130" duration="865000" />
-      <workItem from="1551679410228" duration="297000" />
-      <workItem from="1551762862706" duration="10797000" />
-      <workItem from="1551821930391" duration="7239000" />
-      <workItem from="1551850862807" duration="599000" />
-      <workItem from="1551922905917" duration="18110000" />
-      <workItem from="1552115285545" duration="61000" />
-      <workItem from="1552190989622" duration="32000" />
-      <workItem from="1552192367404" duration="92000" />
-      <workItem from="1552192475958" duration="6046000" />
-      <workItem from="1552198991826" duration="120000" />
-      <workItem from="1554180946758" duration="2376000" />
-      <workItem from="1554356070561" duration="4397000" />
-      <workItem from="1554404954855" duration="170000" />
-      <workItem from="1554415231243" duration="3424000" />
+      <updated>1554391449465</updated>
+      <workItem from="1554391455901" duration="319000" />
+      <workItem from="1554391901415" duration="181000" />
+      <workItem from="1554393961993" duration="5464000" />
+      <workItem from="1556585197821" duration="1215000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="55391000" />
+    <option name="totallyTimeSpent" value="7179000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="2576" height="1416" extended-state="6" />
@@ -316,27 +239,25 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49962208" weight="0.3369735" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39937598" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.7113116" visible="true" weight="0.32917318" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4982651" weight="0.39937598" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="9" weight="0.050702028" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50037795" side_tool="true" weight="0.33907285" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3299532" />
-      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.28868842" side_tool="true" weight="0.32972324" />
+      <window_info anchor="bottom" id="Messages" order="11" sideWeight="0.499653" weight="0.32972324" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Database" order="5" />
-      <window_info anchor="right" id="Theme Preview" order="6" />
+      <window_info anchor="right" id="Theme Preview" order="5" />
+      <window_info anchor="right" id="Database" order="6" />
       <window_info anchor="right" id="Palette&#9;" order="7" />
       <window_info anchor="right" id="Maven Projects" order="8" />
-      <window_info anchor="right" id="Maven" order="9" />
     </layout>
     <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23455933" />
@@ -375,305 +296,232 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <default-breakpoints>
-        <breakpoint enabled="true" type="javascript-exception">
-          <properties />
-        </breakpoint>
-      </default-breakpoints>
-    </breakpoint-manager>
-  </component>
-  <component name="antWorkspaceConfiguration">
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="FILTER_TARGETS" value="false" />
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/../.." />
+    </ignored-roots>
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/scene/generic/GenericCamera.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="547">
-          <caret line="149" selection-start-line="149" selection-end-line="149" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rml/Degreef.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/ClassLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="710">
-          <caret line="435" selection-start-line="435" selection-end-line="435" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/jre/lib/rt.jar!/sun/instrument/InstrumentationImpl.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="649">
-          <caret line="250" selection-start-line="250" selection-end-line="250" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/net/URLClassLoader.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="226">
-          <caret line="380" column="29" lean-forward="true" selection-start-line="380" selection-start-column="29" selection-end-line="380" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Class.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="2131" selection-start-line="2131" selection-end-line="2131" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/jinput/jinput.jar!/net/java/games/input/Event.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="30" selection-start-line="30" selection-end-line="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/Engine.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1760">
-          <caret line="106" selection-start-line="106" selection-end-line="106" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/scene/Node.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="46" column="9" selection-start-line="46" selection-start-column="9" selection-end-line="46" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/ToggleCameraAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="35" selection-start-line="35" selection-end-line="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/QuitGameAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/CheckIfAbovePlane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraPitchAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="28" column="34" lean-forward="true" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraTiltAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="25" column="36" lean-forward="true" selection-start-line="25" selection-end-line="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/CameraYawAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="27" column="47" selection-start-line="27" selection-end-line="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraPitchDownAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="28" column="26" selection-start-line="28" selection-end-line="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/Controllers/BounceController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="20" column="79" selection-start-line="20" selection-start-column="79" selection-end-line="20" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveForwardAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="23" column="56" selection-start-line="23" selection-start-column="56" selection-end-line="23" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveLeftAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="24" column="8" selection-start-line="24" selection-start-column="8" selection-end-line="24" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveRightAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraPitchUpAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="26" column="56" selection-start-line="26" selection-start-column="56" selection-end-line="26" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/scene/generic/GenericSceneManager.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="257">
-          <caret line="575" selection-start-line="575" selection-end-line="575" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/scene/generic/AbstractGenericFrustum.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="274">
-          <caret line="97" selection-start-line="97" selection-end-line="97" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/javagaming/rage165/ray.jar!/ray/rage/game/BaseGame.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2486">
-          <caret line="158" column="40" selection-start-line="158" selection-start-column="40" selection-end-line="158" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/Controllers/Camera3PController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="44" column="30" selection-start-line="44" selection-start-column="30" selection-end-line="44" selection-end-column="30" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/MoveLeftRightAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="15" column="77" selection-start-line="15" selection-start-column="77" selection-end-line="15" selection-end-column="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/GamepadCommands/MoveForwardBackwardAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="21" selection-start-line="21" selection-end-line="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraYawAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="27" column="56" selection-start-line="27" selection-start-column="56" selection-end-line="27" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBCameraYawLeftAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="27" column="56" selection-start-line="27" selection-start-column="56" selection-end-line="27" selection-end-column="56" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/KeyboardCommands/KBMoveBackwardAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="24" column="56" selection-start-line="24" selection-start-column="56" selection-end-line="24" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/myGameEngine/Controllers/StretchController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="14" selection-start-column="14" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Network/Client/GhostAvatar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="37" selection-start-line="37" selection-end-line="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#291#292#0" expanded="true" />
-            <element signature="e#319#320#0" expanded="true" />
-            <element signature="e#352#353#0" expanded="true" />
-            <element signature="e#381#382#0" expanded="true" />
-            <element signature="e#408#409#0" expanded="true" />
-            <element signature="e#433#434#0" expanded="true" />
-            <element signature="e#467#468#0" expanded="true" />
-            <element signature="e#494#495#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Network/Server/NetworkingServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+        <state relative-caret-position="272">
+          <caret line="16" column="5" lean-forward="true" selection-start-line="16" selection-start-column="5" selection-end-line="16" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/ray/rage/util/Configuration.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/ray/rage/asset/AbstractAssetManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="25" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/ray/rage/asset/mesh/MeshManager.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Network/Server/GameServerUDP.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1210">
-          <caret line="60" column="56" selection-start-line="60" selection-start-column="56" selection-end-line="60" selection-end-column="56" />
+        <state relative-caret-position="2024">
+          <caret line="97" column="9" selection-start-line="97" selection-start-column="9" selection-end-line="97" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Network/Client/GhostAvatar.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
+          <folding>
+            <element signature="e#876#877#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/ray/rage/game/BaseGame.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="50" selection-start-line="50" selection-end-line="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/A3/MyGame.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="78" column="13" selection-start-line="78" selection-start-column="13" selection-end-line="78" selection-end-column="13" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$PROJECT_DIR$/out/artifacts/myGameA1_jar/myGame.jar!/ray/rage/Engine.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="50" selection-start-line="50" selection-end-line="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/ClassLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="487" selection-start-line="487" selection-end-line="487" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/jre/lib/rt.jar!/sun/misc/Launcher.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="424">
+          <caret line="187" selection-start-line="187" selection-end-line="187" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/jre/lib/rt.jar!/sun/misc/URLClassPath.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="289" selection-start-line="289" selection-end-line="289" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/System.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="333" selection-start-line="333" selection-end-line="333" />
+          <folding>
+            <element signature="e#11597#11598#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/String.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="1610" selection-start-line="1610" selection-end-line="1610" />
+          <folding>
+            <element signature="e#62916#62917#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_201/src.zip!/java/lang/Math.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="1335" selection-start-line="1335" selection-end-line="1335" />
+          <folding>
+            <element signature="e#52271#52272#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Network/Client/ProtocolClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="31" column="37" selection-start-line="31" selection-start-column="37" selection-end-line="31" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Scripts/InitPlanetParams.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        <state relative-caret-position="506">
+          <caret line="33" lean-forward="true" selection-start-line="33" selection-end-line="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/A3/MyGame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="56" column="38" lean-forward="true" selection-start-line="56" selection-start-column="38" selection-end-line="56" selection-end-column="38" />
-          <folding>
-            <element signature="e#27987#27988#0" expanded="true" />
-            <element signature="e#28024#28025#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="594">
+          <caret line="118" column="9" lean-forward="true" selection-start-line="118" selection-start-column="9" selection-end-line="118" selection-end-column="9" />
         </state>
       </provider>
     </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>myGame</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>10</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>myGame</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

@@ -8,7 +8,7 @@ import net.java.games.input.Event;
 
 public class KBMoveRightAction extends AbstractInputAction{
     private Camera camera;
-    private SceneNode dolphinN;
+    private SceneNode myCubeNode;
     private MyGame obj;
     private float speedScale = 70; //The higher the number, the slower the objects move
     private SceneNode playerGroupNode;
@@ -19,11 +19,10 @@ public class KBMoveRightAction extends AbstractInputAction{
     }
 
     public void performAction(float time, Event e){
-        playerGroupNode = obj.getEngine().getSceneManager().getSceneNode("playerGroupNode");
-        dolphinN = (SceneNode)playerGroupNode.getChild("myDolphinNode");
+        myCubeNode = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
 
-        if(new CheckIfAbovePlane().checkLocal(dolphinN))
-            dolphinN.moveLeft(e.getValue() / speedScale);
+        if(new CheckIfAbovePlane().checkLocal(myCubeNode))
+            myCubeNode.moveLeft(e.getValue() / speedScale);
 
     }
 }
