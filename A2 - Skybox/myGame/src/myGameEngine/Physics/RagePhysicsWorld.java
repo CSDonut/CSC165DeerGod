@@ -38,14 +38,13 @@ public class RagePhysicsWorld {
         temptf = arrayConversion.toDoubleArray(treeNode.getLocalTransform().toFloatArray());
         treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObj, temptf, 2.0f);
         treePhysObj.setBounciness(1.0f);
-//        treeNode.scale(1.0f, 1.0f, 1.0f);
         treeNode.setPhysicsObject(treePhysObj);
 
         //Making phys obj for character
-        temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());
-        characterPhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), mass, temptf, sizeOfCubeCharacter);
-        characterPhysObj.setBounciness(1.0f);
-        characterNode.setPhysicsObject(characterPhysObj);
+//        temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());
+//        characterPhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), mass, temptf, sizeOfCubeCharacter);
+//        characterPhysObj.setBounciness(1.0f);
+//        characterNode.setPhysicsObject(characterPhysObj);
 
 
         //Making ground plane phys obj

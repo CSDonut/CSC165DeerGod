@@ -36,7 +36,6 @@ public class MoveForwardBackwardAction extends AbstractInputAction{
         if(e.getValue() <= 0.1 || e.getValue() >= -0.1){
             if(new CheckIfAbovePlane().checkLocal(cubeN)) {
                 cubeN.moveBackward(e.getValue() / speedScale);
-                cubeN.getPhysicsObject().applyForce(0.0f,0.0f, 0.0f, cubeN.getLocalPosition().x(), cubeN.getLocalPosition().y() ,cubeN.getLocalPosition().z());
             }
 
             try {

@@ -253,7 +253,7 @@ public class MyGame extends VariableFrameRateGame {
         borderNode.translate(15f, 0.0f, 10f);
         borderNode.yaw(Degreef.createFrom(90));
 
-        //===========Cystral Rocks============================================================
+        //===========Crystal Rocks============================================================
 
         Entity rock = sm.createEntity("rock1","Rock2.obj");
         Texture rocktex = sm.getTextureManager().getAssetByPath("rock.jpg");
@@ -411,7 +411,9 @@ public class MyGame extends VariableFrameRateGame {
                 localAvatarPosition.z()
         );
 
+
         avatarN.setLocalPosition(newAvatarPosition);
+
     }
 
     //============= Networking ==========================================
@@ -571,6 +573,7 @@ public class MyGame extends VariableFrameRateGame {
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
         CameraTiltAction CameraTiltCmd = new CameraTiltAction(this);
+        ShootArrowAction ShoowArrowCmd = new ShootArrowAction(this, physicsEng);
 
 
         ArrayList controllers = im.getControllers();
@@ -622,7 +625,7 @@ public class MyGame extends VariableFrameRateGame {
 //                im.associateAction(c, Component.Identifier.Axis.RY, CameraPitchCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 //
 //                //Tilt camera using left and right triggers on gamepad(Xbox controller)
-//                im.associateAction(c, Component.Identifier.Axis.Z, CameraTiltCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+                im.associateAction(c, Component.Identifier.Button._6, ShoowArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
                 //Quit game action using button 7(Start button) on gamepad
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
