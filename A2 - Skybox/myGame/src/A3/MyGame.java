@@ -382,6 +382,8 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.yaw(Degreef.createFrom(45.0f));
         initPhysicsSystem();
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
+        RagePhysicsWorld.createRagePhysicsWorld();
+
         setupNetworking();
 
 
