@@ -6,6 +6,7 @@ package myGameEngine.Physics;
         import ray.physics.PhysicsObject;
         import ray.physics.PhysicsEngineFactory;
         import ray.rage.scene.SceneNode;
+        import ray.rml.Vector3f;
 
 public class RagePhysicsWorld {
     private SceneNode PlayerGroupN, RootNode, gndNode, treeNode,
@@ -27,29 +28,32 @@ public class RagePhysicsWorld {
     }
     public void createRagePhysicsWorld(){
         float mass = 1.0f;
+        float staticObj = 0.0f;
         float up[] = {0,1,0};
+        float sizeOfCubeCharacter[] = {.3f, .3f, .3f};
         double[] temptf;
         PhysicsObject gndPlaneP, treePhysObj,characterPhysObj;
 
         //Making phys object for tree
         temptf = arrayConversion.toDoubleArray(treeNode.getLocalTransform().toFloatArray());
-        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), 0.0f, temptf, 2.0f);
+        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObj, temptf, 2.0f);
         treePhysObj.setBounciness(1.0f);
 //        treeNode.scale(1.0f, 1.0f, 1.0f);
         treeNode.setPhysicsObject(treePhysObj);
 
         //Making phys obj for character
         temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());
-        characterPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), 0.0f, temptf, 2.0f);
+        characterPhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), mass, temptf, sizeOfCubeCharacter);
         characterPhysObj.setBounciness(1.0f);
         characterNode.setPhysicsObject(characterPhysObj);
+
 
         //Making ground plane phys obj
         temptf = arrayConversion.toDoubleArray(gndNode.getLocalTransform().toFloatArray());
         gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(),
                 temptf, up, 0.0f);
         gndPlaneP.setBounciness(1.0f);
-
+//        gndNode.setLocalPosition(0,20,0);
         gndNode.setPhysicsObject(gndPlaneP);
 // can also set damping, friction, etc.
     }
