@@ -26,6 +26,7 @@ public class MoveLeftRightAction extends AbstractInputAction{
     public void performAction(float time, Event e){
         cubeN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         protClient = obj.getProtClient();
+        obj.updateVerticalPosition();
 
         if(e.getValue() <= 0.3 || e.getValue() >= -0.3){
             if(new CheckIfAbovePlane().checkLocal(cubeN))

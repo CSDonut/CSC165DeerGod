@@ -1,1 +1,1 @@
-var spinSpeed = 0.5;
+var spinSpeed = 10.0;

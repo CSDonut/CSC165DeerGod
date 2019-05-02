@@ -99,9 +99,8 @@ public class ProtocolClient extends GameConnectionClient {
 
     private void createGhostAvatar(UUID ghostID, Vector3 ghostPosition) throws IOException {
         GhostAvatar ghost = new GhostAvatar(ghostID, ghostPosition);
-        ghostAvatars.add(ghost);
         game.addGhostAvatarToGameWorld(ghost);
-
+        ghostAvatars.add(ghost);
     }
 
     private void removeGhostAvatar(UUID ghostID) {
@@ -161,7 +160,7 @@ public class ProtocolClient extends GameConnectionClient {
             }
         }
 
-        System.out.println(exist);
+
         if (exist){
             ghost.setPosition(position);
         }

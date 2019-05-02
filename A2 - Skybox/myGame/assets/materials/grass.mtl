@@ -1,0 +1,25 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl 1
+Ns 9.803922
+Ka 0.104567 0.104567 0.104567
+Kd 0.004025 0.309469 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\grassblade.png
+
+newmtl 2
+Ns 9.803922
+Ka 0.320233 0.320233 0.320233
+Kd 0.401978 0.552011 0.004025
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\grassblade.png
+map_Ka C:\\Users\\juhyt\\Desktop\\images.jpg
