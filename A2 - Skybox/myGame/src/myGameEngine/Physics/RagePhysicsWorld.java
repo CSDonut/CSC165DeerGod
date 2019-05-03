@@ -37,7 +37,7 @@ public class RagePhysicsWorld {
         //Making phys object for tree
         temptf = arrayConversion.toDoubleArray(treeNode.getLocalTransform().toFloatArray());
 //        treePhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), staticObjMass, temptf, treeSize);
-        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 5.0f);
+        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 4.0f);
         treePhysObj.setBounciness(.20f);
         treeNode.setPhysicsObject(treePhysObj);
 
@@ -51,8 +51,8 @@ public class RagePhysicsWorld {
         //Making ground plane phys obj
         temptf = arrayConversion.toDoubleArray(gndNode.getLocalTransform().toFloatArray());
 
-//        gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(), temptf, up, 0f);
-        gndPlaneP = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 100.0f);
+//      gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(), temptf, up, 0f);
+        gndPlaneP = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 5.0f);
         gndPlaneP.setBounciness(1.0f);
 //        gndNode.setLocalPosition(0,20,0);
         gndNode.setLocalScale(70,100,70);

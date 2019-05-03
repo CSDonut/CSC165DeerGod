@@ -271,35 +271,23 @@ public class MyGame extends VariableFrameRateGame {
 
         //============ Grass ==========================================================
 
-        Entity grassE = sm.createEntity("grassblade","grass.obj");
-        Texture grasstex = sm.getTextureManager().getAssetByPath("grassblade.png");
-        TextureState grassState = (TextureState) sm.getRenderSystem()
-                .createRenderState(RenderState.Type.TEXTURE);
-        grassState.setTexture(grasstex);
-        grassE.setRenderState(grassState);
+        for(int i = 0; i<9; i++){
+            SkeletalEntity grassE1 = sm.createSkeletalEntity("grassE" + i,"grassAnime.rkm","grassAnime.rks");
+            Texture grasstexOne = sm.getTextureManager().getAssetByPath("medievalfantasyforest_diffuse.png");
+            TextureState grassStateOne = (TextureState) sm.getRenderSystem()
+                    .createRenderState(RenderState.Type.TEXTURE);
+            grassStateOne.setTexture(grasstexOne);
+            grassE1.setRenderState(grassStateOne);
 
-        SceneNode grassNode =
-                sm.getRootSceneNode().createChildSceneNode("grassNode");
-        grassNode.attachObject(grassE);
-        grassNode.setLocalScale(2,1f,2);
-        grassNode.setLocalPosition(10,.8f ,10);
+            SceneNode grassNode1 =
+                    sm.getRootSceneNode().createChildSceneNode("grassNode" + i);
+            grassNode1.attachObject(grassE1);
+            grassNode1.setLocalScale(.5f,.5f,.5f);
+            //grassNode1.pitch(Degreef.createFrom(90.0f));
+            grassNode1.setLocalPosition(-25,.8f ,-30);
 
-//        SkeletalEntity grassE1 = sm.createSkeletalEntity("grassE1","Grass.rkm","Grass.rks");
-//        Texture grasstexOne = sm.getTextureManager().getAssetByPath("grassblade.png");
-//        TextureState grassStateOne = (TextureState) sm.getRenderSystem()
-//                .createRenderState(RenderState.Type.TEXTURE);
-//        grassStateOne.setTexture(grasstexOne);
-//        grassE1.setRenderState(grassStateOne);
-
-//        SceneNode grassNode1 =
-//                sm.getRootSceneNode().createChildSceneNode("grassNode1");
-//        grassNode1.attachObject(grassE1);
-//        grassNode1.setLocalScale(.1f,.1f,.1f);
-//        grassNode.yaw(Degreef.createFrom(90.0f));
-//        grassNode1.setLocalPosition(5,.8f ,5);
-//
-//        grassE1.loadAnimation("waveAnimation", "Grass.rka");
-
+            grassE1.loadAnimation("waveAnimation", "grassAnime.rka");
+        }
 
         //=============================================================================
 
@@ -358,7 +346,7 @@ public class MyGame extends VariableFrameRateGame {
                 sm.getRootSceneNode().
                         createChildSceneNode("TessN");
         tessN.attachObject(tessE);
-        tessN.scale(70, 100, 70);
+        tessN.scale(70, 1, 70);
         tessN.setLocalPosition(0,0,0);
         tessE.setHeightMap(this.getEngine(), "floor3.png");
         tessE.setTexture(this.getEngine(), "grassFloor.jpg");
@@ -384,6 +372,7 @@ public class MyGame extends VariableFrameRateGame {
         setupOrbitCamera(eng, sm);
 
         cubeN.yaw(Degreef.createFrom(45.0f));
+
         initPhysicsSystem();
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         RagePhysicsWorld.createRagePhysicsWorld();
@@ -549,23 +538,24 @@ public class MyGame extends VariableFrameRateGame {
                 }
             }
         }
-//        animationUpdate();
-//        animationStart();
+        animationUpdate();
+        if(done){
+            animationStart();
+            done = false;
+        }
     }
 
-//    private void animationStart() {
-//        if(done){
-//            SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
-//            grass.playAnimation("waveAnimation", 0.5f, SkeletalEntity.EndType.LOOP, 0);
-//            done = false;
-//        }
-//
-//    }
+    public void animationStart() {
+        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+        grass.stopAnimation();
+        grass.playAnimation("waveAnimation", 1f, SkeletalEntity.EndType.LOOP, 0);
 
-//    private void animationUpdate() {
-//        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
-//        grass.update();
-//    }
+    }
+
+    private void animationUpdate() {
+        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
+        grass.update();
+    }
 
     protected void setupInputs(){
         im = new GenericInputManager();
