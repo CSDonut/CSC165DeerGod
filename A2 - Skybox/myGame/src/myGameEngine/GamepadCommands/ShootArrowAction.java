@@ -36,26 +36,6 @@ public class ShootArrowAction extends AbstractInputAction{
     }
 
     public void performAction(float time, Event e){
-        double[] temptf;
-
-        try{
-            Entity arrowE = myGameObj.getEngine().getSceneManager().createEntity("arrow " + physicsEngine.nextUID(), "cube.obj");
-            arrowN = rootN.createChildSceneNode("arrow " + physicsEngine.nextUID());
-            arrowN.scale(0.3f, 0.3f, 0.3f);
-            arrowN.attachObject(arrowE);
-            arrowN.setLocalPosition(avatarN.getLocalPosition());
-            arrowN.setLocalRotation(avatarN.getLocalRotation());
-            arrowN.moveUp(0.5f);
-            arrowN.moveLeft(0.1f);
-            //Creating phys object for arrow
-            temptf = arrayConversion.toDoubleArray(arrowN.getLocalTransform().toFloatArray());
-            PhysicsObject arrowPhysObj = physicsEngine.addSphereObject(physicsEngine.nextUID(), mass, temptf, 1.0f);
-            Vector3f velocity = (Vector3f)arrowN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, 20.0f));
-            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
-            arrowN.setPhysicsObject(arrowPhysObj);
-            System.out.println("Shoot gun");
-        }catch(Exception err){
-            err.printStackTrace();
-        }
+        myGameObj.shootArrow();
     }
 }

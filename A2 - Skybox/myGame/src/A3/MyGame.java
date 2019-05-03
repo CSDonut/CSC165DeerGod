@@ -76,7 +76,7 @@ public class MyGame extends VariableFrameRateGame {
     boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
-    SceneNode  playerGroupN;
+    SceneNode  playerGroupN, rootN;
 
     private boolean done = true;
     private boolean running = true;
@@ -160,7 +160,7 @@ public class MyGame extends VariableFrameRateGame {
         ManualObject manObjGroundPlane;
         ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
         zstate.setTestEnabled(true);
-
+        rootN = getEngine().getSceneManager().getRootSceneNode();
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
 
@@ -573,7 +573,7 @@ public class MyGame extends VariableFrameRateGame {
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
         CameraTiltAction CameraTiltCmd = new CameraTiltAction(this);
-        ShootArrowAction ShoowArrowCmd = new ShootArrowAction(this, physicsEng);
+        ShootArrowAction ShootArrowCmd = new ShootArrowAction(this, physicsEng);
 
 
         ArrayList controllers = im.getControllers();
@@ -625,7 +625,7 @@ public class MyGame extends VariableFrameRateGame {
 //                im.associateAction(c, Component.Identifier.Axis.RY, CameraPitchCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 //
 //                //Tilt camera using left and right triggers on gamepad(Xbox controller)
-                im.associateAction(c, Component.Identifier.Button._6, ShoowArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+                im.associateAction(c, net.java.games.input.Component.Identifier.Button._6, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
                 //Quit game action using button 7(Start button) on gamepad
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
@@ -677,5 +677,32 @@ public class MyGame extends VariableFrameRateGame {
         physicsEng = PhysicsEngineFactory.createPhysicsEngine(engine);
         physicsEng.initSystem();
         physicsEng.setGravity(gravity);
+    }
+
+    public void shootArrow(){
+        float mass = 1.0f;
+        SceneNode arrowN, avatarN;
+        double[] temptf;
+        avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+
+        try{
+            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
+            arrowN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
+            arrowN.scale(0.05f, 0.05f, 0.3f);
+            arrowN.attachObject(arrowE);
+            arrowN.setLocalPosition(avatarN.getLocalPosition());
+            arrowN.setLocalRotation(avatarN.getLocalRotation());
+            arrowN.moveUp(0.5f);
+            arrowN.moveLeft(0.1f);
+            //Creating phys object for arrow
+            temptf = arrayConversion.toDoubleArray(arrowN.getLocalTransform().toFloatArray());
+            PhysicsObject arrowPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), mass, temptf, 1.0f);
+            Vector3f velocity = (Vector3f)arrowN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, 20.0f));
+            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
+            arrowN.setPhysicsObject(arrowPhysObj);
+            System.out.println("Shoot gun");
+        }catch(Exception err){
+            err.printStackTrace();
+        }
     }
 }
