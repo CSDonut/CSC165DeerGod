@@ -169,6 +169,8 @@ public class MyGame extends VariableFrameRateGame {
         File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
         this.runScript(scriptFile1);
 
+        //Set up phys object for avatar
+        PhysicsObject avatarPhysObj;
         // set up sky box
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
@@ -218,6 +220,7 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.moveUp(0.1f);
         cubeN.attachObject(cubeE);
         cubeN.scale(.3f,.3f,.3f);
+
 
         SceneNode CubeNode =  cubeN.createChildSceneNode("CubeCamNode");
 //        CubeNode.attachObject(camera2);
@@ -356,6 +359,7 @@ public class MyGame extends VariableFrameRateGame {
                         createChildSceneNode("TessN");
         tessN.attachObject(tessE);
         tessN.scale(70, 100, 70);
+        tessN.setLocalPosition(0,0,0);
         tessE.setHeightMap(this.getEngine(), "floor3.png");
         tessE.setTexture(this.getEngine(), "grassFloor.jpg");
 
@@ -383,7 +387,6 @@ public class MyGame extends VariableFrameRateGame {
         initPhysicsSystem();
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         RagePhysicsWorld.createRagePhysicsWorld();
-
         setupNetworking();
 
 
@@ -624,8 +627,8 @@ public class MyGame extends VariableFrameRateGame {
 //                //pitch camera using right joystick on gamepad(Xbox controller)
 //                im.associateAction(c, Component.Identifier.Axis.RY, CameraPitchCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 //
-//                //Tilt camera using left and right triggers on gamepad(Xbox controller)
-                im.associateAction(c, net.java.games.input.Component.Identifier.Button._6, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+//                //Shoot arrow using right bumper
+                im.associateAction(c, net.java.games.input.Component.Identifier.Button._5, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
                 //Quit game action using button 7(Start button) on gamepad
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
@@ -681,6 +684,7 @@ public class MyGame extends VariableFrameRateGame {
 
     public void shootArrow(){
         float mass = 1.0f;
+        float arrowSpeed = 600.0f;
         SceneNode arrowN, avatarN;
         double[] temptf;
         avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
@@ -688,7 +692,7 @@ public class MyGame extends VariableFrameRateGame {
         try{
             Entity arrowE = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
             arrowN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
-            arrowN.scale(0.05f, 0.05f, 0.3f);
+            arrowN.scale(.02f, .02f, .50f);
             arrowN.attachObject(arrowE);
             arrowN.setLocalPosition(avatarN.getLocalPosition());
             arrowN.setLocalRotation(avatarN.getLocalRotation());
@@ -697,12 +701,16 @@ public class MyGame extends VariableFrameRateGame {
             //Creating phys object for arrow
             temptf = arrayConversion.toDoubleArray(arrowN.getLocalTransform().toFloatArray());
             PhysicsObject arrowPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), mass, temptf, 1.0f);
-            Vector3f velocity = (Vector3f)arrowN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, 20.0f));
-            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
+            Vector3f velocity = (Vector3f)arrowN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 50.0f, arrowSpeed));
+//            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
+            arrowPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
+                    arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
+            arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
-            System.out.println("Shoot gun");
         }catch(Exception err){
             err.printStackTrace();
         }
     }
+
+
 }

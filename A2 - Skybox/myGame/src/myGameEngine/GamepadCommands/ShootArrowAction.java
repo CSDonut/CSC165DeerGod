@@ -1,19 +1,11 @@
 package myGameEngine.GamepadCommands;
-
 import A3.MyGame;
-import Network.Client.ProtocolClient;
-import graphicslib3D.Vector3D;
-import myGameEngine.CheckIfAbovePlane;
 import myGameEngine.Physics.ArrayConversion;
 import ray.input.action.AbstractInputAction;
 import ray.physics.PhysicsEngine;
-import ray.physics.PhysicsObject;
 import ray.rage.scene.*;
 import net.java.games.input.Event;
-import ray.rml.Vector3;
-import ray.rml.Vector3f;
 
-import java.io.IOException;
 
 
 public class ShootArrowAction extends AbstractInputAction{
