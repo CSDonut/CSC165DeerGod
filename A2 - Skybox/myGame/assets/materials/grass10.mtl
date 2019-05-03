@@ -1,0 +1,13 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl medievalfantasyforest_unwrap
+Ns 94.117647
+Ka 1.000000 1.000000 1.000000
+Kd 0.030817 1.000000 0.088027
+Ks 0.054109 0.650005 0.100736
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\Ultra-Combo\Documents\Program\Test\assets\textures\medievalfantasyforest_diffuse.png
