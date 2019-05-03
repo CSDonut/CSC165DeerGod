@@ -1,0 +1,101 @@
+# Blender MTL File: 'None'
+# Material Count: 9
+
+newmtl Material.001
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.319513 0.208151
+Ks 0.059638 0.059638 0.059638
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl Material.002
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.310784 0.211387
+Ks 0.296238 0.298307 0.330932
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl Material.003
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.573545 0.262247 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl Material.004
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.171446 0.571662
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl Material.005
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.752325 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl Material.006
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.121860 0.026364 0.052106
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere1_TXTR.png
+
+newmtl Material.007
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.074543 0.469677 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png
+
+newmtl lambert2SG
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.029099 0.009971 0.002325
+Ks 0.500000 0.071646 0.229692
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 0.000000
+illum 6
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere1_TXTR.png
+
+newmtl lambert3SG
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.615178 0.615178 0.615178
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2SS
+map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\PolySphere3_TXTR.png

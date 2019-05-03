@@ -143,7 +143,9 @@ public class MyGame extends VariableFrameRateGame {
         rw.getViewport(0).setCamera(camera);
         SceneNode cameraN =
                 rootNode.createChildSceneNode("MainCameraNode");
+        cameraN.moveUp(5f);
         cameraN.attachObject(camera);
+
         camera.setMode('n');
         camera.getFrustum().setFarClipDistance(1000.0f);
     }
@@ -212,14 +214,18 @@ public class MyGame extends VariableFrameRateGame {
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
 
         //Cube code
-        Entity cubeE = sm.createEntity("myCube", "cube.obj");
+        Entity cubeE = sm.createEntity("myCube", "Chiro.obj");
         cubeE.setPrimitive(Primitive.TRIANGLES);
 
         SceneNode cubeN = playerGroupN.createChildSceneNode("myCubeNode");
+        Texture cubeNTex = sm.getTextureManager().getAssetByPath("PolySphere3_TXTR.png");
+        TextureState cubeNTexState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        cubeNTexState.setTexture(cubeNTex);
         cubeN.moveBackward(5.0f);
         cubeN.moveUp(0.1f);
         cubeN.attachObject(cubeE);
-        cubeN.scale(.3f,.3f,.3f);
+        cubeN.scale(.1f,.1f,.1f);
 
 
         SceneNode CubeNode =  cubeN.createChildSceneNode("CubeCamNode");
@@ -239,7 +245,7 @@ public class MyGame extends VariableFrameRateGame {
                 sm.getRootSceneNode().createChildSceneNode("treeNode");
         manN.attachObject(treeOne);
         manN.scale(0.5f, 0.5f, 0.5f);
-        manN.translate(0f, 0.0f, .5f);
+        manN.translate(-2f, 0.8f, -2f);
 
         //=====Rock Border===========================================================
         Entity borderOne = sm.createEntity("Border","Border.obj");
@@ -271,7 +277,7 @@ public class MyGame extends VariableFrameRateGame {
 
         //============ Grass ==========================================================
 
-        for(int i = 0; i<9; i++){
+        for(int i = 1; i<=19; i++){
             SkeletalEntity grassE1 = sm.createSkeletalEntity("grassE" + i,"grassAnime.rkm","grassAnime.rks");
             Texture grasstexOne = sm.getTextureManager().getAssetByPath("medievalfantasyforest_diffuse.png");
             TextureState grassStateOne = (TextureState) sm.getRenderSystem()
@@ -284,10 +290,16 @@ public class MyGame extends VariableFrameRateGame {
             grassNode1.attachObject(grassE1);
             grassNode1.setLocalScale(.5f,.5f,.5f);
             //grassNode1.pitch(Degreef.createFrom(90.0f));
-            grassNode1.setLocalPosition(-25,.8f ,-30);
+            if( new Random().nextInt(2) % i == 0){
+                grassNode1.yaw(Degreef.createFrom(90.0f));
+            }
+            grassNode1.setLocalPosition(((Double)(jsEngine.get("grass" + i + "x"))).floatValue(),
+                    .8f ,
+                    ((Double)(jsEngine.get("grass" + i + "z"))).floatValue());
 
             grassE1.loadAnimation("waveAnimation", "grassAnime.rka");
         }
+
 
         //=============================================================================
 
@@ -340,7 +352,7 @@ public class MyGame extends VariableFrameRateGame {
         BounceController bc = new BounceController();
 
         //================ Terrain ==================================
-        Tessellation tessE = sm.createTessellation("tessE", 9);
+        Tessellation tessE = sm.createTessellation("tessE", 6);
         tessE.setSubdivisions(32f);
         SceneNode tessN =
                 sm.getRootSceneNode().
@@ -351,7 +363,7 @@ public class MyGame extends VariableFrameRateGame {
         tessE.setHeightMap(this.getEngine(), "floor3.png");
         tessE.setTexture(this.getEngine(), "grassFloor.jpg");
 
-        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 9);
+        Tessellation tessWaterE = sm.createTessellation("tessWaterE", 6);
         tessWaterE.setSubdivisions(32f);
         SceneNode tessWaterN =
                 sm.getRootSceneNode().
@@ -397,8 +409,8 @@ public class MyGame extends VariableFrameRateGame {
                 localAvatarPosition.x(),
                 // The Y coordinate is the varying height
                 tessE.getWorldHeight(
-                        worldAvatarPosition.x() + .3f,
-                        worldAvatarPosition.z()) + .3f,
+                        worldAvatarPosition.x(),
+                        worldAvatarPosition.z()),
                 //Keep the Z coordinate
                 localAvatarPosition.z()
         );
@@ -546,15 +558,19 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public void animationStart() {
-        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
-        grass.stopAnimation();
-        grass.playAnimation("waveAnimation", 1f, SkeletalEntity.EndType.LOOP, 0);
+        for(int i = 1; i<19; i++){
+            SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE" + i);
+            grass.stopAnimation();
+            grass.playAnimation("waveAnimation", 1f, SkeletalEntity.EndType.LOOP, 0);
+        }
 
     }
 
     private void animationUpdate() {
-        SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE1");
-        grass.update();
+        for(int i = 1; i<19; i++) {
+            SkeletalEntity grass = (SkeletalEntity) getEngine().getSceneManager().getEntity("grassE" + i);
+            grass.update();
+        }
     }
 
     protected void setupInputs(){
