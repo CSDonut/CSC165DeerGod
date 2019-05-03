@@ -76,7 +76,7 @@ public class MyGame extends VariableFrameRateGame {
     boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
     String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
-    SceneNode  playerGroupN;
+    SceneNode  playerGroupN, rootN;
 
     private boolean done = true;
     private boolean running = true;
@@ -160,7 +160,7 @@ public class MyGame extends VariableFrameRateGame {
         ManualObject manObjGroundPlane;
         ZBufferState zstate = (ZBufferState) rs.createRenderState(RenderState.Type.ZBUFFER);
         zstate.setTestEnabled(true);
-
+        rootN = getEngine().getSceneManager().getRootSceneNode();
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
 
@@ -169,6 +169,8 @@ public class MyGame extends VariableFrameRateGame {
         File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
         this.runScript(scriptFile1);
 
+        //Set up phys object for avatar
+        PhysicsObject avatarPhysObj;
         // set up sky box
         Configuration conf = eng.getConfiguration();
         tm.setBaseDirectoryPath(conf.valueOf("assets.skyboxes.path"));
@@ -219,6 +221,7 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.attachObject(cubeE);
         cubeN.scale(.3f,.3f,.3f);
 
+
         SceneNode CubeNode =  cubeN.createChildSceneNode("CubeCamNode");
 //        CubeNode.attachObject(camera2);
         //CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
@@ -253,7 +256,7 @@ public class MyGame extends VariableFrameRateGame {
         borderNode.translate(15f, 0.0f, 10f);
         borderNode.yaw(Degreef.createFrom(90));
 
-        //===========Cystral Rocks============================================================
+        //===========Crystal Rocks============================================================
 
         Entity rock = sm.createEntity("rock1","Rock2.obj");
         Texture rocktex = sm.getTextureManager().getAssetByPath("rock.jpg");
@@ -356,6 +359,7 @@ public class MyGame extends VariableFrameRateGame {
                         createChildSceneNode("TessN");
         tessN.attachObject(tessE);
         tessN.scale(70, 100, 70);
+        tessN.setLocalPosition(0,0,0);
         tessE.setHeightMap(this.getEngine(), "floor3.png");
         tessE.setTexture(this.getEngine(), "grassFloor.jpg");
 
@@ -383,7 +387,6 @@ public class MyGame extends VariableFrameRateGame {
         initPhysicsSystem();
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         RagePhysicsWorld.createRagePhysicsWorld();
-
         setupNetworking();
 
 
@@ -411,7 +414,9 @@ public class MyGame extends VariableFrameRateGame {
                 localAvatarPosition.z()
         );
 
+
         avatarN.setLocalPosition(newAvatarPosition);
+
     }
 
     //============= Networking ==========================================
@@ -571,6 +576,7 @@ public class MyGame extends VariableFrameRateGame {
         CameraYawAction CameraYawCmd = new CameraYawAction(this);
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
         CameraTiltAction CameraTiltCmd = new CameraTiltAction(this);
+        ShootArrowAction ShootArrowCmd = new ShootArrowAction(this, physicsEng);
 
 
         ArrayList controllers = im.getControllers();
@@ -621,8 +627,8 @@ public class MyGame extends VariableFrameRateGame {
 //                //pitch camera using right joystick on gamepad(Xbox controller)
 //                im.associateAction(c, Component.Identifier.Axis.RY, CameraPitchCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 //
-//                //Tilt camera using left and right triggers on gamepad(Xbox controller)
-//                im.associateAction(c, Component.Identifier.Axis.Z, CameraTiltCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
+//                //Shoot arrow using right bumper
+                im.associateAction(c, net.java.games.input.Component.Identifier.Button._5, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
                 //Quit game action using button 7(Start button) on gamepad
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
@@ -675,4 +681,36 @@ public class MyGame extends VariableFrameRateGame {
         physicsEng.initSystem();
         physicsEng.setGravity(gravity);
     }
+
+    public void shootArrow(){
+        float mass = 1.0f;
+        float arrowSpeed = 600.0f;
+        SceneNode arrowN, avatarN;
+        double[] temptf;
+        avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+
+        try{
+            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
+            arrowN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
+            arrowN.scale(.02f, .02f, .50f);
+            arrowN.attachObject(arrowE);
+            arrowN.setLocalPosition(avatarN.getLocalPosition());
+            arrowN.setLocalRotation(avatarN.getLocalRotation());
+            arrowN.moveUp(0.5f);
+            arrowN.moveLeft(0.1f);
+            //Creating phys object for arrow
+            temptf = arrayConversion.toDoubleArray(arrowN.getLocalTransform().toFloatArray());
+            PhysicsObject arrowPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), mass, temptf, 1.0f);
+            Vector3f velocity = (Vector3f)arrowN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 50.0f, arrowSpeed));
+//            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
+            arrowPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
+                    arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
+            arrowPhysObj.setBounciness(1.0f);
+            arrowN.setPhysicsObject(arrowPhysObj);
+        }catch(Exception err){
+            err.printStackTrace();
+        }
+    }
+
+
 }

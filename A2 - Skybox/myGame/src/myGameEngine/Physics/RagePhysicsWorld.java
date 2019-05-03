@@ -6,10 +6,11 @@ package myGameEngine.Physics;
         import ray.physics.PhysicsObject;
         import ray.physics.PhysicsEngineFactory;
         import ray.rage.scene.SceneNode;
+        import ray.rml.Vector3f;
 
 public class RagePhysicsWorld {
     private SceneNode PlayerGroupN, RootNode, gndNode, treeNode,
-                        characterNode;
+            characterNode;
     private PhysicsEngine physicsEng;
     private ArrayConversion arrayConversion;
     private MyGame myGameObj;
@@ -21,35 +22,41 @@ public class RagePhysicsWorld {
         this.arrayConversion = new ArrayConversion();
         //Game Nodes
         this.treeNode = (SceneNode)RootNode.getChild("treeNode");
-        this.gndNode = (SceneNode)RootNode.getChild("TessN");
+        this.gndNode = myGameObj.getEngine().getSceneManager().getSceneNode("TessN");
         this.characterNode = (SceneNode)PlayerGroupN.getChild("myCubeNode");
 
     }
     public void createRagePhysicsWorld(){
         float mass = 1.0f;
+        float staticObjMass = 0.0f;
         float up[] = {0,1,0};
+        float treeSize[] = {20.50f, 1000.0f, 20.50f};
         double[] temptf;
         PhysicsObject gndPlaneP, treePhysObj,characterPhysObj;
 
         //Making phys object for tree
         temptf = arrayConversion.toDoubleArray(treeNode.getLocalTransform().toFloatArray());
-        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), 0.0f, temptf, 2.0f);
-        treePhysObj.setBounciness(1.0f);
-//        treeNode.scale(1.0f, 1.0f, 1.0f);
+//        treePhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), staticObjMass, temptf, treeSize);
+        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 5.0f);
+        treePhysObj.setBounciness(.20f);
         treeNode.setPhysicsObject(treePhysObj);
 
         //Making phys obj for character
-        temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());
-        characterPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), 0.0f, temptf, 2.0f);
-        characterPhysObj.setBounciness(1.0f);
-        characterNode.setPhysicsObject(characterPhysObj);
+//        temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());
+//        characterPhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), mass, temptf, sizeOfCubeCharacter);
+//        characterPhysObj.setBounciness(1.0f);
+//        characterNode.setPhysicsObject(characterPhysObj);
+
 
         //Making ground plane phys obj
         temptf = arrayConversion.toDoubleArray(gndNode.getLocalTransform().toFloatArray());
-        gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(),
-                temptf, up, 0.0f);
-        gndPlaneP.setBounciness(1.0f);
 
+//        gndPlaneP = physicsEng.addStaticPlaneObject(physicsEng.nextUID(), temptf, up, 0f);
+        gndPlaneP = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 100.0f);
+        gndPlaneP.setBounciness(1.0f);
+//        gndNode.setLocalPosition(0,20,0);
+        gndNode.setLocalScale(70,100,70);
+        gndNode.setLocalPosition(0,0,0);
         gndNode.setPhysicsObject(gndPlaneP);
 // can also set damping, friction, etc.
     }

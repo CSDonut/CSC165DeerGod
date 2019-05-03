@@ -15,7 +15,7 @@ public class MoveLeftRightAction extends AbstractInputAction{
     private SceneNode cubeN;
     private MyGame obj;
     private ProtocolClient protClient;
-    private float speedScale = 70; //The higher the number, the slower the objects move
+    private float speedScale = 50; //The higher the number, the slower the objects move
 
     public MoveLeftRightAction(MyGame myGameObj, ProtocolClient p){
         camera = myGameObj.getEngine().getSceneManager().getCamera("MainCamera");
