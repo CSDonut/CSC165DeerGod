@@ -1,4 +1,6 @@
 var spinSpeed = 10.0;
+var camPitchAmt = 0.2;
+var arrowAmt = 20;
 
 var grass1x = -25.0;
 var grass1z = -30.0;

@@ -1,6 +1,8 @@
 package myGameEngine.Controllers;
 
 
+import A3.MyGame;
+import javafx.scene.Scene;
 import ray.input.InputManager;
 import ray.input.action.AbstractInputAction;
 import ray.rage.scene.*;
@@ -13,20 +15,25 @@ public class Camera3PController {
     private Camera camera; //the camera being controlled
     private SceneNode cameraN; //the node the camera is attached to
     private SceneNode target; //the target the camera looks at
+    private SceneNode avatarN;
     private float cameraAzimuth; //rotation of camera around Y axis
     private float cameraElevation; //elevation of camera above target
     private float radias; //distance between camera and target
     private Vector3 targetPos; //target’s position in the world
     private Vector3 worldUpVec;
+    private float camPitchAmt, camYawAmt, camZoomAmt;
 
-    public Camera3PController(Camera cam, SceneNode camN, SceneNode targ, String controllerName, InputManager im) {
+    public Camera3PController(MyGame myGameObj, Camera cam, SceneNode camN, SceneNode targ, String controllerName, InputManager im) {
         camera = cam;
         cameraN = camN;
         target = targ;
         cameraAzimuth = 225.0f; // start from BEHIND and ABOVE the target
         cameraElevation = 20.0f; // elevation is in degrees
         radias = 2.0f;
+        camPitchAmt = camYawAmt = 1.0f; //bigger the number, slower the values go
+        camZoomAmt = 15.0f;
         worldUpVec = Vector3f.createFrom(0.0f, 1.0f, 0.0f);
+        avatarN = (SceneNode)myGameObj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         setupInput(im, controllerName);
         updateCameraPosition();
     }
@@ -53,17 +60,22 @@ public class Camera3PController {
         public void performAction(float time, net.java.games.input.Event evt)
         {
             float rotAmount;
-            if (evt.getValue() < -0.2)
-            { rotAmount=-0.2f; }
+            if (evt.getValue() < -0.2) {
+                rotAmount = evt.getValue()/-camPitchAmt;
+                avatarN.yaw(Degreef.createFrom(rotAmount));
+            }
             else
-            { if (evt.getValue() > 0.2)
-            { rotAmount=0.2f; }
+            { if (evt.getValue() > 0.2) {
+                rotAmount= evt.getValue()/-camPitchAmt;
+                avatarN.yaw(Degreef.createFrom(rotAmount));
+            }
             else
             { rotAmount=0.0f; }
             }
             cameraAzimuth += rotAmount;
             cameraAzimuth = cameraAzimuth % 360;
             updateCameraPosition();
+
         }
     }
     // similar for OrbitRadiasAction, OrbitElevationAction
@@ -73,10 +85,10 @@ public class Camera3PController {
         {
             float zoomAmount;
             if (evt.getValue() < -0.2)
-            { zoomAmount=-0.1f; }
+            { zoomAmount = evt.getValue()/camZoomAmt; }
             else
             { if (evt.getValue() > 0.2)
-            { zoomAmount=0.1f; }
+            { zoomAmount = evt.getValue()/camZoomAmt; }
             else
             { zoomAmount=0.1f; }
             }
@@ -96,10 +108,10 @@ public class Camera3PController {
         {
             float rotAmount;
             if (evt.getValue() < -0.2)
-            { rotAmount=-0.2f; }
+            { rotAmount= evt.getValue()/camYawAmt; }
             else
             { if (evt.getValue() > 0.2)
-            { rotAmount=0.2f; }
+            { rotAmount = evt.getValue()/camYawAmt; }
             else
             { rotAmount=0.0f; }
             }
@@ -121,6 +133,7 @@ public class Camera3PController {
         cameraN.setLocalPosition(Vector3f.createFrom
                 ((float)x, (float)y, (float)z).add(target.getWorldPosition()));
         cameraN.lookAt(target, worldUpVec);
+
     }
 
 }

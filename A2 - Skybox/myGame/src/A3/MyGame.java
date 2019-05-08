@@ -68,7 +68,8 @@ public class MyGame extends VariableFrameRateGame {
     GL4RenderSystem rs;
     float elapsTime = 0.0f;
     String elapsTimeStr, planetsVisitedString, dispStr, collectedArtifactsString;
-    int elapsTimeSec, planetsVisited = 0, collectedArtifacts = 0;
+    int elapsTimeSec;
+    int arrowAmt;
 
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
@@ -165,6 +166,7 @@ public class MyGame extends VariableFrameRateGame {
         rootN = getEngine().getSceneManager().getRootSceneNode();
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
+        arrowAmt = ((Integer)(jsEngine.get("arrowAmt"))).intValue();
 
         jsEngine = factory.getEngineByName("js");
         // use spin speed setting from the first script to initialize dolphin rotation
@@ -514,7 +516,7 @@ public class MyGame extends VariableFrameRateGame {
             gpName = im.getFirstGamepadName();
         }
 
-        orbitController = new Camera3PController(camera, cameraN, cubeN, gpName, im);
+        orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
 
     }
 
@@ -527,12 +529,11 @@ public class MyGame extends VariableFrameRateGame {
         elapsTime += engine.getElapsedTimeMillis();
         elapsTimeSec = Math.round(elapsTime/1000.0f);
         elapsTimeStr = Integer.toString(elapsTimeSec);
-        planetsVisitedString = Integer.toString(planetsVisited);
-        collectedArtifactsString= Integer.toString(collectedArtifacts);
-        dispStr = "Cube position " + elapsTimeStr;
+
+        dispStr = "Arrows Left:  " + arrowAmt;
         rs.setHUD(dispStr, 15, 15);
-        dispStr = "Dolphin Time = " + elapsTimeStr;
-        rs.setHUD2(dispStr, 15, (rs.getRenderWindow().getViewport(0).getActualHeight() + 20));
+
+
         im.update(elapsTime);
         orbitController.updateCameraPosition();
         updateGhostPosition();
@@ -628,13 +629,14 @@ public class MyGame extends VariableFrameRateGame {
                 im.associateAction(c, Component.Identifier.Axis.X, moveLeftRightCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
 
 //                //yaw camera using right joystick on gamepad(Xbox controller)
-//                im.associateAction(c, Component.Identifier.Axis.RX, CameraYawCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-//
+//                  inside of Camera3PController
 //                //pitch camera using right joystick on gamepad(Xbox controller)
-//                im.associateAction(c, Component.Identifier.Axis.RY, CameraPitchCmd, InputManager.INPUT_ACTION_TYPE.REPEAT_WHILE_DOWN);
-//
-//                //Shoot arrow using right bumper
-                im.associateAction(c, net.java.games.input.Component.Identifier.Button._5, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+//                  inside of Camera3PController
+
+                //Shoot arrow using right bumper
+                    im.associateAction(c, net.java.games.input.Component.Identifier.Button._5, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+
+
 
                 //Quit game action using button 7(Start button) on gamepad
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._7, quitGameCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
@@ -691,7 +693,7 @@ public class MyGame extends VariableFrameRateGame {
     public void shootArrow(){
         float mass = 1.0f;
         float staticMass = 0.0f;
-        float arrowSpeed = 600.0f;
+        float arrowSpeed = 1500.0f;
         SceneNode arrowN, avatarN, arrowGroundN;
         double[] temptf;
         avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
@@ -707,6 +709,7 @@ public class MyGame extends VariableFrameRateGame {
             arrowN.setLocalRotation(avatarN.getLocalRotation());
             arrowN.moveUp(0.5f);
             arrowN.moveLeft(0.1f);
+
             //Creating phys object for arrow
             temptf = arrayConversion.toDoubleArray(arrowN.getLocalTransform().toFloatArray());
             PhysicsObject arrowPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), mass, temptf, .50f);
@@ -714,32 +717,9 @@ public class MyGame extends VariableFrameRateGame {
 //            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
             arrowPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
                     arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
+//            arrowPhysObj.a
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
-
-            Entity arrow2E = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
-            arrowGroundN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
-            arrowGroundN.attachObject(arrow2E);
-            arrowGroundN.scale(.02f, .02f, .50f);
-            arrowGroundN.setLocalRotation(arrowN.getLocalRotation());
-            arrowGroundN.setLocalPosition(arrowN.getWorldPosition().x(), tessE.getWorldHeight(arrowN.getWorldPosition().x(),
-                    arrowN.getWorldPosition().z()),
-                    arrowN.getWorldPosition().z());
-            temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
-            if(arrowN.getWorldPosition().y() == tessE.getWorldHeight(avatarN.getWorldPosition().x(),
-                    avatarN.getWorldPosition().z())){
-                temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
-                PhysicsObject arrowGndPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticMass, temptf, 0.20f);
-                velocity = (Vector3f)arrowGroundN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, arrowSpeed));
-//                arrowGndPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
-//                        arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
-                arrowGndPhysObj.setBounciness(0.0f);
-                arrowGroundN.setPhysicsObject(arrowGndPhysObj);
-            }
-            //Creating another arrow object that would act as the ground when it hits
-
-
-
 
 
             //Creating another arrow object that would act as the ground when it hits
