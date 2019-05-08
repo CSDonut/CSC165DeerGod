@@ -713,6 +713,30 @@ public class MyGame extends VariableFrameRateGame {
                     arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
+
+            //Creating another arrow object that would act as the ground when it hits
+
+//            Entity arrow2E = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
+//            arrowGroundN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
+//            arrowGroundN.attachObject(arrow2E);
+//            arrowGroundN.scale(.02f, .02f, .50f);
+//            arrowGroundN.setLocalRotation(arrowN.getLocalRotation());
+//            arrowGroundN.setLocalPosition(arrowN.getWorldPosition().x(), tessE.getWorldHeight(arrowN.getWorldPosition().x(),
+//                    arrowN.getWorldPosition().z()),
+//                    arrowN.getWorldPosition().z());
+//            temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
+//            if(arrowN.getWorldPosition().y() == tessE.getWorldHeight(arrowGroundN.getWorldPosition().x(),
+//                    arrowGroundN.getWorldPosition().z())){
+//                temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
+//                PhysicsObject arrowGndPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticMass, temptf, 0.20f);
+//                velocity = (Vector3f)arrowGroundN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, arrowSpeed));
+////                arrowGndPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
+////                        arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
+//                arrowGndPhysObj.setBounciness(0.0f);
+//                arrowGroundN.setPhysicsObject(arrowGndPhysObj);
+//            }
+
+            
         }catch(Exception err){
             err.printStackTrace();
         }
