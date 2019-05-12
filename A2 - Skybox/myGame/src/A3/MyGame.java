@@ -61,6 +61,7 @@ import com.jogamp.openal.ALFactory;
 
 public class MyGame extends VariableFrameRateGame {
     // to minimize variable allocation in update()
+    private int bgVolume = 30;
     private static final String SKYBOX_NAME = "SkyBox";
     private boolean skyBoxVisible = true;
     private String serverAddress;
@@ -442,7 +443,7 @@ public class MyGame extends VariableFrameRateGame {
          }
 
          resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
-         bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, 30, true);
+         bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
          bgSound.initialize(audioMgr);
          setEarParameters(sm);
          bgSound.play();
