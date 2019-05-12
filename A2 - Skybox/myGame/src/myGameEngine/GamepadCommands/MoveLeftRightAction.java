@@ -29,13 +29,17 @@ public class MoveLeftRightAction extends AbstractInputAction{
         obj.updateVerticalPosition();
 
         if(e.getValue() <= 0.3 || e.getValue() >= -0.3){
-            if(new CheckIfAbovePlane().checkLocal(cubeN))
+            if(new CheckIfAbovePlane().checkLocal(cubeN)) {
                 cubeN.moveLeft(e.getValue() / speedScale);
+//                obj.playWalkingSounds();
+            }
             try {
                 protClient.sendMoveMessage(cubeN.getWorldPosition());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
+
+//        obj.pauseWalkingSounds();
     }
 }
