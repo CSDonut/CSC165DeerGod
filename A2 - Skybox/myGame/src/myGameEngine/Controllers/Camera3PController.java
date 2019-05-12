@@ -125,7 +125,8 @@ public class Camera3PController {
     // relative to the target in spherical coordinates, then converts those
     // to world Cartesian coordinates and setting the camera position
     public void updateCameraPosition()
-    { double theta = Math.toRadians(cameraAzimuth); // rot around target
+    {
+        double theta = Math.toRadians(cameraAzimuth); // rot around target
         double phi = Math.toRadians(cameraElevation); // altitude angle
         double x = radias * Math.cos(phi) * Math.sin(theta);
         double y = radias * Math.sin(phi);

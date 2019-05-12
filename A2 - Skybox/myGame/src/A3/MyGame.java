@@ -61,7 +61,8 @@ import com.jogamp.openal.ALFactory;
 
 public class MyGame extends VariableFrameRateGame {
     // to minimize variable allocation in update()
-    private int bgVolume = 30;
+    private int bgVolume = 10;
+    private int arrowSoundVol = 100;
     private static final String SKYBOX_NAME = "SkyBox";
     private boolean skyBoxVisible = true;
     private String serverAddress;
@@ -71,7 +72,7 @@ public class MyGame extends VariableFrameRateGame {
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
     IAudioManager audioMgr;
-    Sound bgSound;
+    Sound bgSound, ShootArrowSound, hunterWalkSound;
 
     GL4RenderSystem rs;
     float elapsTime = 0.0f;
@@ -152,7 +153,6 @@ public class MyGame extends VariableFrameRateGame {
         rw.getViewport(0).setCamera(camera);
         SceneNode cameraN =
                 rootNode.createChildSceneNode("MainCameraNode");
-        cameraN.moveUp(5f);
         cameraN.attachObject(camera);
 
         camera.setMode('n');
@@ -237,10 +237,8 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.attachObject(cubeE);
         cubeN.scale(.1f,.1f,.1f);
 
-
-        SceneNode CubeNode =  cubeN.createChildSceneNode("CubeCamNode");
-//        CubeNode.attachObject(camera2);
-        //CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
+        SceneNode CubeNode =  cubeN.createChildSceneNode("CamNode");
+        CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 4.5f, 0));
 
         //Blender Tree =============================================================
         Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
@@ -433,22 +431,36 @@ public class MyGame extends VariableFrameRateGame {
 
 
     //Init Audio
-     public void initAudio(SceneManager sm) {
-         AudioResource resource1;
-         audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
+    public void initAudio(SceneManager sm) {
+        AudioResource resource1, resource2, walkingResource;
+        audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
 
-         if (!audioMgr.initialize()) {
-             System.out.println("Audio Manager failed to initialize!");
-             return;
-         }
+        if (!audioMgr.initialize()) {
+            System.out.println("Audio Manager failed to initialize!");
+            return;
+        }
 
-         resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
-         bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
-         bgSound.initialize(audioMgr);
-         setEarParameters(sm);
-         bgSound.play();
+        //Arrow sound
+        resource2 = audioMgr.createAudioResource("assets/sounds/BowShoot.wav", AudioResourceType.AUDIO_SAMPLE);
+        ShootArrowSound = new Sound(resource2, SoundType.SOUND_EFFECT, arrowSoundVol, false);
+        ShootArrowSound.initialize(audioMgr);
 
-     }
+        //Walking sound
+        resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
+        bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
+        bgSound.initialize(audioMgr);
+
+
+        //Background music
+        walkingResource = audioMgr.createAudioResource("assets/sounds/HunterWalk.wav", AudioResourceType.AUDIO_SAMPLE);
+        hunterWalkSound = new Sound(walkingResource, SoundType.SOUND_EFFECT, 100, false);
+        hunterWalkSound.initialize(audioMgr);
+
+
+        setEarParameters(sm);
+//        bgSound.play();
+
+    }
 
     public void setEarParameters(SceneManager sm){
         SceneNode avatarNode = sm.getSceneNode("myCubeNode");
@@ -541,7 +553,7 @@ public class MyGame extends VariableFrameRateGame {
 
     protected void setupOrbitCamera(Engine eng, SceneManager sm) {
         String gpName;
-        SceneNode cubeN = sm.getSceneNode("myCubeNode");
+        SceneNode cubeN = sm.getSceneNode("CamNode");
         SceneNode cameraN = sm.getSceneNode("MainCameraNode");
         Camera camera = sm.getCamera("MainCamera");
         if(im.getFirstGamepadName() == null){
@@ -551,7 +563,6 @@ public class MyGame extends VariableFrameRateGame {
         }
 
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
-
     }
 
 
@@ -731,11 +742,18 @@ public class MyGame extends VariableFrameRateGame {
         physicsEng.setGravity(gravity);
     }
 
+    public void playWalkingSounds(){
+        hunterWalkSound.play();
+    }
+
+    public void pauseWalkingSounds(){
+        hunterWalkSound.pause();
+    }
     public void shootArrow(){
         float mass = 1.0f;
         float staticMass = 0.0f;
         float arrowSpeed = 1500.0f;
-        SceneNode arrowN, avatarN, arrowGroundN;
+        SceneNode arrowN, avatarN;
         double[] temptf;
         avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
         SceneNode tessN = this.getEngine().getSceneManager().getSceneNode("TessN");
@@ -758,34 +776,10 @@ public class MyGame extends VariableFrameRateGame {
 //            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
             arrowPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
                     arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
-//            arrowPhysObj.a
+
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
-
-
-            //Creating another arrow object that would act as the ground when it hits
-
-//            Entity arrow2E = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "cube.obj");
-//            arrowGroundN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
-//            arrowGroundN.attachObject(arrow2E);
-//            arrowGroundN.scale(.02f, .02f, .50f);
-//            arrowGroundN.setLocalRotation(arrowN.getLocalRotation());
-//            arrowGroundN.setLocalPosition(arrowN.getWorldPosition().x(), tessE.getWorldHeight(arrowN.getWorldPosition().x(),
-//                    arrowN.getWorldPosition().z()),
-//                    arrowN.getWorldPosition().z());
-//            temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
-//            if(arrowN.getWorldPosition().y() == tessE.getWorldHeight(arrowGroundN.getWorldPosition().x(),
-//                    arrowGroundN.getWorldPosition().z())){
-//                temptf = arrayConversion.toDoubleArray(arrowGroundN.getLocalTransform().toFloatArray());
-//                PhysicsObject arrowGndPhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticMass, temptf, 0.20f);
-//                velocity = (Vector3f)arrowGroundN.getLocalRotation().mult(Vector3f.createFrom(0.0f, 0.0f, arrowSpeed));
-////                arrowGndPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
-////                        arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
-//                arrowGndPhysObj.setBounciness(0.0f);
-//                arrowGroundN.setPhysicsObject(arrowGndPhysObj);
-//            }
-
-
+            ShootArrowSound.play();
 
         }catch(Exception err){
             err.printStackTrace();
