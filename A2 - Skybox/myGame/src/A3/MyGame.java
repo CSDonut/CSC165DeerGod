@@ -10,6 +10,7 @@ import java.util.*;
 
 import Network.Client.GhostAvatar;
 import Network.Client.ProtocolClient;
+import javafx.scene.Scene;
 import myGameEngine.Controllers.BounceController;
 import myGameEngine.Controllers.StretchController;
 import myGameEngine.GamepadCommands.*;
@@ -54,8 +55,13 @@ import ray.physics.PhysicsEngine;
 import ray.physics.PhysicsObject;
 import ray.physics.PhysicsEngineFactory;
 
+//Audio imports
+import ray.audio.*;
+import com.jogamp.openal.ALFactory;
+
 public class MyGame extends VariableFrameRateGame {
     // to minimize variable allocation in update()
+    private int bgVolume = 30;
     private static final String SKYBOX_NAME = "SkyBox";
     private boolean skyBoxVisible = true;
     private String serverAddress;
@@ -64,6 +70,8 @@ public class MyGame extends VariableFrameRateGame {
     private ProtocolClient protClient;
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
+    IAudioManager audioMgr;
+    Sound bgSound;
 
     GL4RenderSystem rs;
     float elapsTime = 0.0f;
@@ -388,6 +396,7 @@ public class MyGame extends VariableFrameRateGame {
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         RagePhysicsWorld.createRagePhysicsWorld();
         setupNetworking();
+        initAudio(sm);
 
 
     }
@@ -419,6 +428,31 @@ public class MyGame extends VariableFrameRateGame {
 
     }
 
+
+    //Init Audio
+     public void initAudio(SceneManager sm) {
+         AudioResource resource1;
+         audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
+
+         if (!audioMgr.initialize()) {
+             System.out.println("Audio Manager failed to initialize!");
+             return;
+         }
+
+         resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
+         bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
+         bgSound.initialize(audioMgr);
+         setEarParameters(sm);
+         bgSound.play();
+
+     }
+
+    public void setEarParameters(SceneManager sm){
+        SceneNode avatarNode = sm.getSceneNode("myCubeNode");
+        Vector3 avDir = avatarNode.getWorldForwardAxis();
+        audioMgr.getEar().setLocation(avatarNode.getWorldPosition());
+        audioMgr.getEar().setOrientation(avDir, Vector3f.createFrom(0,1,0));
+    }
     //============= Networking ==========================================
 
     private void setupNetworking()
@@ -525,6 +559,8 @@ public class MyGame extends VariableFrameRateGame {
         elapsTime += engine.getElapsedTimeMillis();
         elapsTimeSec = Math.round(elapsTime/1000.0f);
         elapsTimeStr = Integer.toString(elapsTimeSec);
+        SceneManager sm = engine.getSceneManager();
+        SceneNode avatarN = sm.getSceneNode("myCubeNode");
 
         dispStr = "Arrows Left:  " + arrowAmt;
         rs.setHUD(dispStr, 15, 15);
@@ -552,6 +588,11 @@ public class MyGame extends VariableFrameRateGame {
             animationStart();
             done = false;
         }
+
+        //Setting sound up
+        bgSound.setLocation(avatarN.getWorldPosition());
+        setEarParameters(sm);
+
     }
 
     public void animationStart() {
@@ -740,7 +781,7 @@ public class MyGame extends VariableFrameRateGame {
 //                arrowGroundN.setPhysicsObject(arrowGndPhysObj);
 //            }
 
-            
+
 
         }catch(Exception err){
             err.printStackTrace();
