@@ -144,7 +144,6 @@ public class MyGame extends VariableFrameRateGame {
         rw.getViewport(0).setCamera(camera);
         SceneNode cameraN =
                 rootNode.createChildSceneNode("MainCameraNode");
-        cameraN.moveUp(5f);
         cameraN.attachObject(camera);
 
         camera.setMode('n');
@@ -229,10 +228,8 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.attachObject(cubeE);
         cubeN.scale(.1f,.1f,.1f);
 
-
-        SceneNode CubeNode =  cubeN.createChildSceneNode("CubeCamNode");
-//        CubeNode.attachObject(camera2);
-        //CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 0.5f, -0.5f));
+        SceneNode CubeNode =  cubeN.createChildSceneNode("CamNode");
+        CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 4.5f, 0));
 
         //Blender Tree =============================================================
         Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
@@ -507,7 +504,7 @@ public class MyGame extends VariableFrameRateGame {
 
     protected void setupOrbitCamera(Engine eng, SceneManager sm) {
         String gpName;
-        SceneNode cubeN = sm.getSceneNode("myCubeNode");
+        SceneNode cubeN = sm.getSceneNode("CamNode");
         SceneNode cameraN = sm.getSceneNode("MainCameraNode");
         Camera camera = sm.getCamera("MainCamera");
         if(im.getFirstGamepadName() == null){
@@ -517,7 +514,6 @@ public class MyGame extends VariableFrameRateGame {
         }
 
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
-
     }
 
 
