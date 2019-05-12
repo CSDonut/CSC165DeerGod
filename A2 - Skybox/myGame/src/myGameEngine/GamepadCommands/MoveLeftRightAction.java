@@ -28,18 +28,27 @@ public class MoveLeftRightAction extends AbstractInputAction{
         protClient = obj.getProtClient();
         obj.updateVerticalPosition();
 
-        if(e.getValue() <= 0.3 || e.getValue() >= -0.3){
-            if(new CheckIfAbovePlane().checkLocal(cubeN)) {
+        if(!obj.getCharaSelect()){
+            if(e.getValue() > .3){
                 cubeN.moveLeft(e.getValue() / speedScale);
-//                obj.playWalkingSounds();
+            }
+            if(e.getValue() < -.3){
+                cubeN.moveLeft(e.getValue() / speedScale);
             }
             try {
-                protClient.sendMoveMessage(cubeN.getWorldPosition());
-            } catch (IOException e1) {
+                    protClient.sendMoveMessage(cubeN.getWorldPosition());
+                } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
+        else{
+            if(e.getValue() > .5){
+               obj.setDeerOrHunt(false);
+            }
+            else if(e.getValue() < -.5){
+                obj.setDeerOrHunt(true);
+            }
+        }
 
-//        obj.pauseWalkingSounds();
     }
 }

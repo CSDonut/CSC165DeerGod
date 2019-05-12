@@ -13,11 +13,13 @@ public class GhostAvatar {
     private SceneNode node;
     private Entity entity;
     private Vector3 pos;
+    private boolean model;
 
 
-    public GhostAvatar(UUID id, Vector3 position) {
+    public GhostAvatar(UUID id, Vector3 position, boolean modelType) {
         this.id = id;
         this.pos = position;
+        this.model = modelType;
     }
 
     public Entity getEntity() {
@@ -36,6 +38,11 @@ public class GhostAvatar {
         return pos;
     }
 
+    public Boolean getModel(){
+        return model;
+
+    }
+
     public void setNode(SceneNode ghostN) {
         this.node = ghostN;
     }
@@ -47,5 +54,6 @@ public class GhostAvatar {
     public void setPosition(Vector3 newPosition) {
         pos = newPosition;
     }
+
 
 }

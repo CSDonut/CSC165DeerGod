@@ -20,7 +20,6 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
     public void processPacket(Object o, InetAddress senderIP, int sndPort) {
 
         String message = (String) o;
-        System.out.println(message);
         String[] msgTokens = message.split(",");
         if (msgTokens.length > 0) {
 
@@ -43,8 +42,8 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
             if (msgTokens[0].compareTo("create") == 0) {
                 UUID clientID = UUID.fromString(msgTokens[1]);
                 String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
-                System.out.println(pos);
-                sendCreateMessages(clientID, pos);
+                String modelType = msgTokens[5];
+                sendCreateMessages(clientID, pos, modelType);
                 sendWantsDetailsMessages(clientID);
             }
 
@@ -60,7 +59,8 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
             if (msgTokens[0].compareTo("dsfr") == 0) {
                 UUID clientID = UUID.fromString(msgTokens[1]);
                 String[] pos = {msgTokens[2], msgTokens[3], msgTokens[4]};
-                sendCreateMessages(clientID, pos);
+                String modelType = msgTokens[5];
+                sendCreateMessages(clientID, pos, modelType);
             }
 
             // case where server receives a MOVE message
@@ -84,13 +84,14 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
         catch (IOException e) { e.printStackTrace(); }
     }
 
-    public void sendCreateMessages(UUID clientID, String[] position)
+    public void sendCreateMessages(UUID clientID, String[] position, String modelType)
     { // format: create, remoteId, x, y, z
         try
         { String message = "create," + clientID.toString();
             message += "," + position[0];
             message += "," + position[1];
             message += "," + position[2];
+            message += "," + modelType;
             forwardPacketToAll(message, clientID);
 
         }
