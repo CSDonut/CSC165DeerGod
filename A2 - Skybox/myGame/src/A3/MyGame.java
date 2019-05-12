@@ -458,7 +458,7 @@ public class MyGame extends VariableFrameRateGame {
 
 
         setEarParameters(sm);
-//        bgSound.play();
+        bgSound.play();
 
     }
 
