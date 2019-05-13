@@ -23,8 +23,14 @@ public class CameraTiltAction extends AbstractInputAction{
         cubeN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         tiltAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
 
-        if(new CheckIfAbovePlane().checkLocal(cubeN))
-            cubeN.roll(tiltAmt);
+
+
+        if(!obj.getCharaSelect()){
+            if(new CheckIfAbovePlane().checkLocal(cubeN))
+                cubeN.roll(tiltAmt);
+
+        }
+
 
     }
 }

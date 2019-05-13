@@ -10,6 +10,7 @@ import java.util.*;
 
 import Network.Client.GhostAvatar;
 import Network.Client.ProtocolClient;
+import com.jogamp.graph.geom.Triangle;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import javafx.scene.Scene;
@@ -114,12 +115,6 @@ public class MyGame extends VariableFrameRateGame {
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
         arrayConversion = new ArrayConversion();
-        System.out.println("Left joystick on gamepad controls movement");
-        System.out.println("Right joystick controls camera controls");
-        System.out.println("Triggers control roll");
-        System.out.println("Y button controls camera toggle");
-        System.out.println("Start button ends game");
-
     }
 
     public static void main(String[] args) {
@@ -241,9 +236,28 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.moveUp(0.1f);
         cubeN.attachObject(cubeE);
         cubeN.scale(.1f,.1f,.1f);
+        cubeN.setLocalPosition(-5, 0, 10);
 
         SceneNode CubeNode =  cubeN.createChildSceneNode("CamNode");
         CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 4.5f, 0));
+
+        // Chara Select Screen =========================
+
+        Entity charaSelectE = sm.createEntity("selectScreen", "charaSelectScreen.obj");
+        charaSelectE.setPrimitive(Primitive.TRIANGLES);
+
+        SceneNode screenSelectN = rootN.createChildSceneNode("CharaSelect");
+        Texture screenSelectTxt = sm.getTextureManager().getAssetByPath("charaSelectOne.png");
+        TextureState screenSelectTxtState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        screenSelectTxtState.setTexture(screenSelectTxt);
+
+        screenSelectN.attachObject(charaSelectE);
+//        screenSelectN.yaw(Degreef.createFrom(180));
+//        screenSelectN.pitch(Degreef.createFrom(180));
+//        screenSelectN.roll(Degreef.createFrom(180));
+
+        //==============================================
 
         //Blender Tree =============================================================
         Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
@@ -558,8 +572,11 @@ public class MyGame extends VariableFrameRateGame {
         }else{
             gpName = im.getFirstGamepadName();
         }
-
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
+
+//        cubeN.attachChild(getEngine().getSceneManager().getSceneNode("CharaSelect"));
+//        getEngine().getSceneManager().getSceneNode("CharaSelect").scale(2,2,2);
+//        getEngine().getSceneManager().getSceneNode("CharaSelect").moveBackward(10);
     }
 
 
