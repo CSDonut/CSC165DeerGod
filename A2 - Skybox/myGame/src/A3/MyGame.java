@@ -253,7 +253,7 @@ public class MyGame extends VariableFrameRateGame {
         screenSelectTxtState.setTexture(screenSelectTxt);
 
         screenSelectN.attachObject(charaSelectE);
-//        screenSelectN.yaw(Degreef.createFrom(180));
+        screenSelectN.yaw(Degreef.createFrom(90));
 //        screenSelectN.pitch(Degreef.createFrom(180));
 //        screenSelectN.roll(Degreef.createFrom(180));
 
@@ -574,9 +574,9 @@ public class MyGame extends VariableFrameRateGame {
         }
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
 
-//        cubeN.attachChild(getEngine().getSceneManager().getSceneNode("CharaSelect"));
-//        getEngine().getSceneManager().getSceneNode("CharaSelect").scale(2,2,2);
-//        getEngine().getSceneManager().getSceneNode("CharaSelect").moveBackward(10);
+        cubeN.attachChild(getEngine().getSceneManager().getSceneNode("CharaSelect"));
+//        getEngine().getSceneManager().getSceneNode("CharaSelect").yaw((Degreef.createFrom(180)));
+        getEngine().getSceneManager().getSceneNode("CharaSelect").moveRight(10);
     }
 
 
