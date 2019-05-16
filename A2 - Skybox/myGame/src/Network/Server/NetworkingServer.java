@@ -4,8 +4,9 @@ import java.io.IOException;
 
 
 public class NetworkingServer {
-
     private GameServerUDP thisUDPServer;
+    private NPCController npcCtrl;
+    private long lastUpdateTime;
 
     public NetworkingServer(int serverPort, String protocol) {
         try {
@@ -13,6 +14,22 @@ public class NetworkingServer {
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void npcLoop()
+    {
+        while (true)
+        {
+            long frameStartTime = System.nanoTime();
+            float elapMilSecs = (frameStartTime-lastUpdateTime)/(1000000.0f);
+            if(elapMilSecs >= 50.0f)
+            {
+                lastUpdateTime = frameStartTime;
+                npcCtrl.updateNPCs();
+//                thisUDPServer.sendNPCinfo();
+            }
+            Thread.yield();
         }
     }
 
