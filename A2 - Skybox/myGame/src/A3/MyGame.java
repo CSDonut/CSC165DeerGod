@@ -79,7 +79,9 @@ public class MyGame extends VariableFrameRateGame {
     private Vector<UUID> gameObjectsToRemove;
     private JButton button;
     private Container test;
+
     private int timetest = 0;
+
     IAudioManager audioMgr;
     Sound bgSound, ShootArrowSound, hunterWalkSound;
 
@@ -465,6 +467,7 @@ public class MyGame extends VariableFrameRateGame {
              return;
          }
 
+
          resource2 = audioMgr.createAudioResource("assets/sounds/BowShoot.wav", AudioResourceType.AUDIO_SAMPLE);
          ShootArrowSound = new Sound(resource2, SoundType.SOUND_EFFECT, arrowSoundVol, false);
          ShootArrowSound.initialize(audioMgr);
@@ -474,7 +477,6 @@ public class MyGame extends VariableFrameRateGame {
          bgSound.initialize(audioMgr);
          setEarParameters(sm);
          bgSound.play();
-
      }
 
     public void setEarParameters(SceneManager sm){
@@ -839,6 +841,7 @@ public class MyGame extends VariableFrameRateGame {
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
             ShootArrowSound.play();
+            
 
 
         }catch(Exception err){
