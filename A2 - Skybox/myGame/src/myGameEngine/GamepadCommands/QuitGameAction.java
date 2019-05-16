@@ -26,5 +26,6 @@ public class QuitGameAction extends AbstractInputAction {
         }
         game.animationStopping();
         game.setState(Game.State.STOPPING);
+
     }
 }

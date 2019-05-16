@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.rmi.server.UID;
 import java.util.*;
 
 import Network.Client.GhostAvatar;
@@ -78,6 +79,9 @@ public class MyGame extends VariableFrameRateGame {
     private Vector<UUID> gameObjectsToRemove;
     private JButton button;
     private Container test;
+
+    private int timetest = 0;
+
     IAudioManager audioMgr;
     Sound bgSound, ShootArrowSound, hunterWalkSound;
 
@@ -107,7 +111,7 @@ public class MyGame extends VariableFrameRateGame {
     //Physics engine
     private PhysicsEngine physicsEng;
     private RagePhysicsWorld RagePhysicsWorld;
-
+    private ArrayList<String> arrowIDs;
 
 
     public MyGame(String serverAddr, int sPort) {
@@ -116,6 +120,8 @@ public class MyGame extends VariableFrameRateGame {
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
         arrayConversion = new ArrayConversion();
+        this.arrowIDs = new ArrayList<>();
+
     }
 
     public static void main(String[] args) {
@@ -182,6 +188,7 @@ public class MyGame extends VariableFrameRateGame {
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
         arrowAmt = (Integer) (jsEngine.get("arrowAmt"));
+
 
         jsEngine = factory.getEngineByName("js");
         // use spin speed setting from the first script to initialize dolphin rotation
@@ -460,6 +467,7 @@ public class MyGame extends VariableFrameRateGame {
              return;
          }
 
+
          resource2 = audioMgr.createAudioResource("assets/sounds/BowShoot.wav", AudioResourceType.AUDIO_SAMPLE);
          ShootArrowSound = new Sound(resource2, SoundType.SOUND_EFFECT, arrowSoundVol, false);
          ShootArrowSound.initialize(audioMgr);
@@ -469,7 +477,6 @@ public class MyGame extends VariableFrameRateGame {
          bgSound.initialize(audioMgr);
          setEarParameters(sm);
          bgSound.play();
-
      }
 
     public void setEarParameters(SceneManager sm){
@@ -536,10 +543,24 @@ public class MyGame extends VariableFrameRateGame {
         //avatar.setPosition(0,0,0);
 
     } }
-
+//
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
     }
+
+    public void removeArrows() {
+        SceneNode arrowDelete;
+        for(int i = 0; i < arrowIDs.size(); i++){
+//            System.out.println("removing arrow " + (arrowIDs[i]));
+            arrowDelete = getEngine().getSceneManager().getSceneNode(arrowIDs.get(i));
+//            System.out.println("removing i am hererereerere " + arrowIDs.get(i));
+
+            gameObjectsToRemove.remove(arrowDelete);
+        }
+        arrowIDs.clear();
+
+    }
+
 
     public void setIsConnected(boolean b) {
         isClientConnected = b;
@@ -626,6 +647,13 @@ public class MyGame extends VariableFrameRateGame {
             done = false;
         }
 
+        //Deletion of arrows
+        int timepast = elapsTimeSec - timetest;
+        if(timepast == 10) {
+            removeArrows();
+            System.out.println("Arrows removed");
+            timetest = elapsTimeSec;
+        }
         //Setting sound up
         bgSound.setLocation(avatarN.getWorldPosition());
         setEarParameters(sm);
@@ -790,8 +818,11 @@ public class MyGame extends VariableFrameRateGame {
         Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 
         try{
-            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "earth.obj");
-            arrowN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
+            int arrowIDNum = physicsEng.nextUID();
+            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " +arrowIDNum, "earth.obj");
+            arrowN = rootN.createChildSceneNode("arrow " + arrowIDNum);
+            arrowIDs.add("arrow " + arrowIDNum);
+            System.out.println("arrow" + arrowIDNum);
             arrowN.scale(.02f, .02f, .50f);
             arrowN.attachObject(arrowE);
             arrowN.setLocalPosition(avatarN.getLocalPosition());
@@ -811,6 +842,7 @@ public class MyGame extends VariableFrameRateGame {
             arrowN.setPhysicsObject(arrowPhysObj);
             ShootArrowSound.play();
             
+
 
         }catch(Exception err){
             err.printStackTrace();
