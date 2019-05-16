@@ -6,11 +6,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.rmi.server.UID;
 import java.util.*;
 
 import Network.Client.GhostAvatar;
 import Network.Client.ProtocolClient;
+import com.jogamp.graph.geom.Triangle;
+import com.jogamp.newt.event.MouseEvent;
+import com.jogamp.newt.event.MouseListener;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
 import myGameEngine.Controllers.BounceController;
 import myGameEngine.Controllers.StretchController;
 import myGameEngine.GamepadCommands.*;
@@ -46,6 +51,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import javax.swing.*;
 
 import ray.rage.util.*;
 import java.awt.geom.*;
@@ -71,6 +77,9 @@ public class MyGame extends VariableFrameRateGame {
     private ProtocolClient protClient;
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
+    private JButton button;
+    private Container test;
+    private int timetest = 0;
     IAudioManager audioMgr;
     Sound bgSound, ShootArrowSound, hunterWalkSound;
 
@@ -83,19 +92,24 @@ public class MyGame extends VariableFrameRateGame {
     private InputManager im;
     private Camera3PController orbitController, orbitController2;
     private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
-    boolean ghostListEmpty = true;
+    private boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
-    String[] textureNames = {"blue.jpeg", "hexagons.jpeg", "red.jpeg", "moon.jpeg", "chain-fence.jpeg"};
     SceneNode  playerGroupN, rootN;
 
     private boolean done = true;
     private boolean running = true;
+
+    //Chara Selection: DeerorHunt True = select hunter, False = select Deer
+    private boolean charaSelect = true;
+    private boolean deerOrHunt = false;
+    //Chara End
+
     private ArrayConversion arrayConversion;
 
     //Physics engine
     private PhysicsEngine physicsEng;
     private RagePhysicsWorld RagePhysicsWorld;
-
+    private ArrayList<String> arrowIDs;
 
 
     public MyGame(String serverAddr, int sPort) {
@@ -104,16 +118,12 @@ public class MyGame extends VariableFrameRateGame {
         this.serverPort = sPort;
         this.serverProtocol = ProtocolType.UDP;
         arrayConversion = new ArrayConversion();
-        System.out.println("Left joystick on gamepad controls movement");
-        System.out.println("Right joystick controls camera controls");
-        System.out.println("Triggers control roll");
-        System.out.println("Y button controls camera toggle");
-        System.out.println("Start button ends game");
+        this.arrowIDs = new ArrayList<>();
 
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("10.117.119.67", Integer.parseInt("59000"));
+        Game game = new MyGame("192.168.1.33", Integer.parseInt("59000"));
         ScriptEngineManager factory = new ScriptEngineManager();
         String scriptFileName = "src/Scripts/InitPlanetParams.js";
         List<ScriptEngineFactory> list = factory.getEngineFactories();
@@ -142,6 +152,7 @@ public class MyGame extends VariableFrameRateGame {
     @Override
     protected void setupWindow(RenderSystem rs, GraphicsEnvironment ge) {
         rs.createRenderWindow(new DisplayMode(1000, 700, 24, 60), false);
+
     }
 
 
@@ -174,7 +185,8 @@ public class MyGame extends VariableFrameRateGame {
         rootN = getEngine().getSceneManager().getRootSceneNode();
         ScriptEngineManager factory = new ScriptEngineManager();
         java.util.List<ScriptEngineFactory> list = factory.getEngineFactories();
-        arrowAmt = ((Integer)(jsEngine.get("arrowAmt"))).intValue();
+        arrowAmt = (Integer) (jsEngine.get("arrowAmt"));
+
 
         jsEngine = factory.getEngineByName("js");
         // use spin speed setting from the first script to initialize dolphin rotation
@@ -215,14 +227,8 @@ public class MyGame extends VariableFrameRateGame {
         sm.setActiveSkyBox(sb);
 //End skybox
 
-//        manObjGroundPlane = makePlane(eng, sm);
-//        manObjGroundPlane.setPrimitive(Primitive.TRIANGLES);
-//        SceneNode groundPlaneN = sm.getRootSceneNode().createChildSceneNode("groundPlaneN");
-//        groundPlaneN.attachObject(manObjGroundPlane);
-//        groundPlaneN.scale((float)20.0, (float)1.0, (float)20.0);
 
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
-
         //Cube code
         Entity cubeE = sm.createEntity("myCube", "Chiro.obj");
         cubeE.setPrimitive(Primitive.TRIANGLES);
@@ -236,9 +242,28 @@ public class MyGame extends VariableFrameRateGame {
         cubeN.moveUp(0.1f);
         cubeN.attachObject(cubeE);
         cubeN.scale(.1f,.1f,.1f);
+        cubeN.setLocalPosition(-5, 0, 10);
 
         SceneNode CubeNode =  cubeN.createChildSceneNode("CamNode");
         CubeNode.setLocalPosition(Vector3f.createFrom(0.0f, 4.5f, 0));
+
+        // Chara Select Screen =========================
+
+        Entity charaSelectE = sm.createEntity("selectScreen", "charaSelectScreen.obj");
+        charaSelectE.setPrimitive(Primitive.TRIANGLES);
+
+        SceneNode screenSelectN = rootN.createChildSceneNode("CharaSelect");
+        Texture screenSelectTxt = sm.getTextureManager().getAssetByPath("charaSelectOne.png");
+        TextureState screenSelectTxtState = (TextureState) sm.getRenderSystem()
+                .createRenderState(RenderState.Type.TEXTURE);
+        screenSelectTxtState.setTexture(screenSelectTxt);
+
+        screenSelectN.attachObject(charaSelectE);
+        screenSelectN.yaw(Degreef.createFrom(90));
+//        screenSelectN.pitch(Degreef.createFrom(180));
+//        screenSelectN.roll(Degreef.createFrom(180));
+
+        //==============================================
 
         //Blender Tree =============================================================
         Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
@@ -396,7 +421,7 @@ public class MyGame extends VariableFrameRateGame {
         initPhysicsSystem();
         RagePhysicsWorld = new RagePhysicsWorld(this, physicsEng);
         RagePhysicsWorld.createRagePhysicsWorld();
-        setupNetworking();
+//        setupNetworking();
         initAudio(sm);
 
 
@@ -431,36 +456,26 @@ public class MyGame extends VariableFrameRateGame {
 
 
     //Init Audio
-    public void initAudio(SceneManager sm) {
-        AudioResource resource1, resource2, walkingResource;
-        audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
+     public void initAudio(SceneManager sm) {
+         AudioResource resource1, resource2, walkingResource;;
+         audioMgr = AudioManagerFactory.createAudioManager("ray.audio.joal.JOALAudioManager");
 
-        if (!audioMgr.initialize()) {
-            System.out.println("Audio Manager failed to initialize!");
-            return;
-        }
+         if (!audioMgr.initialize()) {
+             System.out.println("Audio Manager failed to initialize!");
+             return;
+         }
 
-        //Arrow sound
-        resource2 = audioMgr.createAudioResource("assets/sounds/BowShoot.wav", AudioResourceType.AUDIO_SAMPLE);
-        ShootArrowSound = new Sound(resource2, SoundType.SOUND_EFFECT, arrowSoundVol, false);
-        ShootArrowSound.initialize(audioMgr);
+         resource2 = audioMgr.createAudioResource("assets/sounds/BowShoot.wav", AudioResourceType.AUDIO_SAMPLE);
+         ShootArrowSound = new Sound(resource2, SoundType.SOUND_EFFECT, arrowSoundVol, false);
+         ShootArrowSound.initialize(audioMgr);
 
-        //Walking sound
-        resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
-        bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
-        bgSound.initialize(audioMgr);
+         resource1 = audioMgr.createAudioResource("assets/sounds/BgMusic.wav", AudioResourceType.AUDIO_SAMPLE);
+         bgSound = new Sound(resource1, SoundType.SOUND_EFFECT, bgVolume, true);
+         bgSound.initialize(audioMgr);
+         setEarParameters(sm);
+         bgSound.play();
 
-
-        //Background music
-        walkingResource = audioMgr.createAudioResource("assets/sounds/HunterWalk.wav", AudioResourceType.AUDIO_SAMPLE);
-        hunterWalkSound = new Sound(walkingResource, SoundType.SOUND_EFFECT, 100, false);
-        hunterWalkSound.initialize(audioMgr);
-
-
-        setEarParameters(sm);
-        bgSound.play();
-
-    }
+     }
 
     public void setEarParameters(SceneManager sm){
         SceneNode avatarNode = sm.getSceneNode("myCubeNode");
@@ -470,7 +485,7 @@ public class MyGame extends VariableFrameRateGame {
     }
     //============= Networking ==========================================
 
-    private void setupNetworking()
+    public void setupNetworking()
     { gameObjectsToRemove = new Vector<UUID>();
         isClientConnected = false;
         try
@@ -508,11 +523,17 @@ public class MyGame extends VariableFrameRateGame {
     { if (avatar != null) {
         ghostList.add(avatar);
         ghostListEmpty = false;
-        Entity ghostE = getEngine().getSceneManager().createEntity("ghost", "dolphinHighPoly.obj");
+        Entity ghostE;
+        if(!avatar.getModel()){
+             ghostE = getEngine().getSceneManager().createEntity("ghost", "DeerGod.obj");
+        }else {
+             ghostE = getEngine().getSceneManager().createEntity("ghost", "chiro.obj");
+        }
         ghostE.setPrimitive(Primitive.TRIANGLES);
         SceneNode ghostN = getEngine().getSceneManager().getRootSceneNode().
                 createChildSceneNode(avatar.getId().toString());
         System.out.println(avatar.getId());
+        ghostN.scale(.1f,.1f,.1f);
         ghostN.attachObject(ghostE);
         ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
@@ -520,10 +541,24 @@ public class MyGame extends VariableFrameRateGame {
         //avatar.setPosition(0,0,0);
 
     } }
-
+//
     public void removeGhostAvatarFromGameWorld(GhostAvatar avatar)
     { if(avatar != null) gameObjectsToRemove.add(avatar.getId());
     }
+
+    public void removeArrows() {
+        SceneNode arrowDelete;
+        for(int i = 0; i < arrowIDs.size(); i++){
+//            System.out.println("removing arrow " + (arrowIDs[i]));
+            arrowDelete = getEngine().getSceneManager().getSceneNode(arrowIDs.get(i));
+//            System.out.println("removing i am hererereerere " + arrowIDs.get(i));
+
+            gameObjectsToRemove.remove(arrowDelete);
+        }
+        arrowIDs.clear();
+
+    }
+
 
     public void setIsConnected(boolean b) {
         isClientConnected = b;
@@ -561,8 +596,11 @@ public class MyGame extends VariableFrameRateGame {
         }else{
             gpName = im.getFirstGamepadName();
         }
-
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
+
+        cubeN.attachChild(getEngine().getSceneManager().getSceneNode("CharaSelect"));
+//        getEngine().getSceneManager().getSceneNode("CharaSelect").yaw((Degreef.createFrom(180)));
+        getEngine().getSceneManager().getSceneNode("CharaSelect").moveRight(10);
     }
 
 
@@ -583,8 +621,11 @@ public class MyGame extends VariableFrameRateGame {
 
         im.update(elapsTime);
         orbitController.updateCameraPosition();
-        updateGhostPosition();
-        processNetworking(elapsTime);
+
+        if(!charaSelect){
+            updateGhostPosition();
+            processNetworking(elapsTime);
+        }
 
         if (running) {
             Matrix4 mat;
@@ -604,6 +645,13 @@ public class MyGame extends VariableFrameRateGame {
             done = false;
         }
 
+        //Deletion of arrows
+        int timepast = elapsTimeSec - timetest;
+        if(timepast == 10) {
+            removeArrows();
+            System.out.println("Arrows removed");
+            timetest = elapsTimeSec;
+        }
         //Setting sound up
         bgSound.setLocation(avatarN.getWorldPosition());
         setEarParameters(sm);
@@ -617,6 +665,17 @@ public class MyGame extends VariableFrameRateGame {
             grass.playAnimation("waveAnimation", 1f, SkeletalEntity.EndType.LOOP, 0);
         }
 
+    }
+
+    public void animationStopping(){
+       Iterator animationsToStop = getEngine().getSceneManager().getEntities().iterator();
+       while(animationsToStop.hasNext()){
+           Object temp = animationsToStop.next();
+           if (temp instanceof SkeletalEntity){
+               ((SkeletalEntity) temp).stopAnimation();
+               ((SkeletalEntity) temp).update();
+           }
+       }
     }
 
     private void animationUpdate() {
@@ -636,6 +695,7 @@ public class MyGame extends VariableFrameRateGame {
         CameraPitchAction CameraPitchCmd = new CameraPitchAction(this);
         CameraTiltAction CameraTiltCmd = new CameraTiltAction(this);
         ShootArrowAction ShootArrowCmd = new ShootArrowAction(this, physicsEng);
+        SelectChara selectChara = new SelectChara(this);
 
 
         ArrayList controllers = im.getControllers();
@@ -687,6 +747,9 @@ public class MyGame extends VariableFrameRateGame {
 
                 //Shoot arrow using right bumper
                     im.associateAction(c, net.java.games.input.Component.Identifier.Button._5, ShootArrowCmd, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
+
+                    // Select Game Charater
+                im.associateAction(c, net.java.games.input.Component.Identifier.Button._1, selectChara, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
 
 
@@ -742,26 +805,22 @@ public class MyGame extends VariableFrameRateGame {
         physicsEng.setGravity(gravity);
     }
 
-    public void playWalkingSounds(){
-        hunterWalkSound.play();
-    }
-
-    public void pauseWalkingSounds(){
-        hunterWalkSound.pause();
-    }
     public void shootArrow(){
         float mass = 1.0f;
         float staticMass = 0.0f;
         float arrowSpeed = 1500.0f;
-        SceneNode arrowN, avatarN;
+        SceneNode arrowN, avatarN, arrowGroundN;
         double[] temptf;
         avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
         SceneNode tessN = this.getEngine().getSceneManager().getSceneNode("TessN");
         Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 
         try{
-            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " + physicsEng.nextUID(), "earth.obj");
-            arrowN = rootN.createChildSceneNode("arrow " + physicsEng.nextUID());
+            int arrowIDNum = physicsEng.nextUID();
+            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " +arrowIDNum, "earth.obj");
+            arrowN = rootN.createChildSceneNode("arrow " + arrowIDNum);
+            arrowIDs.add("arrow " + arrowIDNum);
+            System.out.println("arrow" + arrowIDNum);
             arrowN.scale(.02f, .02f, .50f);
             arrowN.attachObject(arrowE);
             arrowN.setLocalPosition(avatarN.getLocalPosition());
@@ -776,15 +835,46 @@ public class MyGame extends VariableFrameRateGame {
 //            arrowPhysObj.setLinearVelocity(new float []{velocity.x(), velocity.y(), velocity.z()});
             arrowPhysObj.applyForce(velocity.x(), velocity.y(), velocity.z(), arrowN.getLocalPosition().x(),
                     arrowN.getLocalPosition().y(), arrowN.getLocalPosition().z());
-
+//            arrowPhysObj.a
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
             ShootArrowSound.play();
+
 
         }catch(Exception err){
             err.printStackTrace();
         }
     }
 
+    public void setDeerModel() throws IOException {
+        SceneNode player = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        player.detachObject("myCube");
+
+        Entity temp = getEngine().getSceneManager().createEntity("DeerObj", "DeerGod.obj");
+        player.attachObject(temp);
+        System.out.println("Deer Pressed");
+    }
+
+    public void setHunterModel(){
+        System.out.println("Hunter Pressed");
+    }
+
+
+    public boolean getCharaSelect(){
+        return  charaSelect;
+    }
+
+    public void setCharaSelect(boolean i){
+        charaSelect = i;
+    }
+
+    public boolean getDeerOrHunt(){
+        return deerOrHunt;
+    }
+
+    public void setDeerOrHunt(boolean i){
+        deerOrHunt = i;
+        System.out.println(deerOrHunt);
+    }
 
 }

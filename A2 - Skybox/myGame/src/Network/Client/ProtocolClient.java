@@ -36,7 +36,7 @@ public class ProtocolClient extends GameConnectionClient {
             { // format: join, success or join, failure
                 if (messageTokens[1].compareTo("success") == 0) {
                     game.setIsConnected(true);
-                    sendCreateMessage(game.getPlayerPosition());
+                    sendCreateMessage(game.getPlayerPosition(), game.getDeerOrHunt());
                     System.out.println("Connected to server");
                 }
                 if (messageTokens[1].compareTo("failure") == 0) {
@@ -57,8 +57,9 @@ public class ProtocolClient extends GameConnectionClient {
                         Float.parseFloat(messageTokens[2]),
                         Float.parseFloat(messageTokens[3]),
                         Float.parseFloat(messageTokens[4]));
+                Boolean modelType = Boolean.parseBoolean(messageTokens[5]);
                 try {
-                    createGhostAvatar(ghostID, ghostPosition);
+                    createGhostAvatar(ghostID, ghostPosition, modelType);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -71,9 +72,10 @@ public class ProtocolClient extends GameConnectionClient {
                         game.getPlayerPosition().x(),
                         game.getPlayerPosition().y(),
                         game.getPlayerPosition().z());
+                boolean charaSelect = game.getDeerOrHunt();
 
                 try {
-                    sendDetailsForMessage(ghostID, ghostPosition);
+                    sendDetailsForMessage(ghostID, ghostPosition,charaSelect);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -97,15 +99,15 @@ public class ProtocolClient extends GameConnectionClient {
         }
     }
 
-    private void createGhostAvatar(UUID ghostID, Vector3 ghostPosition) throws IOException {
-        GhostAvatar ghost = new GhostAvatar(ghostID, ghostPosition);
+    private void createGhostAvatar(UUID ghostID, Vector3 ghostPosition, boolean modelType) throws IOException {
+        GhostAvatar ghost = new GhostAvatar(ghostID, ghostPosition, modelType);
         game.addGhostAvatarToGameWorld(ghost);
         ghostAvatars.add(ghost);
     }
 
     private void removeGhostAvatar(UUID ghostID) {
 
-        GhostAvatar ghost = new GhostAvatar(null, null);
+        GhostAvatar ghost = new GhostAvatar(null, null, false);
         Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
         boolean exist = false;
 
@@ -130,10 +132,10 @@ public class ProtocolClient extends GameConnectionClient {
      }
     }
 
-    public void sendCreateMessage(Vector3 pos) { // format: (create, localId, x,y,z)
+    public void sendCreateMessage(Vector3 pos, boolean modelType) { // format: (create, localId, x,y,z)
         try {
             String message = "create," + id.toString();
-            message += "," + pos.x()+"," + pos.y() + "," + pos.z();
+            message += "," + pos.x()+"," + pos.y() + "," + pos.z() + "," + modelType;
             sendPacket(message);
         } catch (IOException e) { e.printStackTrace();
         }
@@ -145,9 +147,15 @@ public class ProtocolClient extends GameConnectionClient {
         sendPacket(message);
     }
 
+    public void sendShootMessage(Vector3 position) throws IOException {
+        String message = "shoot," + id.toString();
+        message += "," + position.x()+"," + position.y() + "," + position.z();
+        sendPacket(message);
+    }
+
     public void MoveAvatar(UUID ghostID, Vector3 position) throws IOException {
 
-        GhostAvatar ghost = new GhostAvatar(null, null);
+        GhostAvatar ghost = new GhostAvatar(null, null, false);
         Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
         boolean exist = false;
 
@@ -167,9 +175,9 @@ public class ProtocolClient extends GameConnectionClient {
 
     }
 
-    public void sendDetailsForMessage(UUID remId, Vector3 position) throws IOException {
+    public void sendDetailsForMessage(UUID remId, Vector3 position, boolean charaSelect) throws IOException {
         String message = "dsfr," + id.toString();
-        message += "," + position.x()+"," + position.y() + "," + position.z();
+        message += "," + position.x()+"," + position.y() + "," + position.z() + "," + charaSelect;
         sendPacket(message);
         // etc…..
     }

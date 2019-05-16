@@ -68,6 +68,7 @@ public class Camera3PController {
             { if (evt.getValue() > 0.2) {
                 rotAmount= evt.getValue()/-camPitchAmt;
                 avatarN.yaw(Degreef.createFrom(rotAmount));
+
             }
             else
             { rotAmount=0.0f; }

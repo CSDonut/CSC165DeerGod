@@ -23,7 +23,7 @@ public class MoveForwardBackwardAction extends AbstractInputAction{
     public MoveForwardBackwardAction(MyGame myGameObj, ProtocolClient p){
         camera = myGameObj.getEngine().getSceneManager().getCamera("MainCamera");
         obj = myGameObj;
-//        this.physicsEng = physicsEng;
+//        this.physicsEng = physicsEng;S
     }
 
     public void performAction(float time, Event e){
@@ -31,18 +31,18 @@ public class MoveForwardBackwardAction extends AbstractInputAction{
         protClient = obj.getProtClient();
         obj.updateVerticalPosition();
 
-        if(e.getValue() <= 0.1 || e.getValue() >= -0.1){
-            if(new CheckIfAbovePlane().checkLocal(cubeN)) {
+        if(!obj.getCharaSelect()){
+            if(e.getValue() > .3){
                 cubeN.moveBackward(e.getValue() / speedScale);
-//                obj.playWalkingSounds();
             }
-
+            if(e.getValue() < -.3){
+                cubeN.moveBackward(e.getValue() / speedScale);
+            }
             try {
                 protClient.sendMoveMessage(cubeN.getWorldPosition());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
         }
-//        obj.pauseWalkingSounds();
     }
 }

@@ -25,7 +25,13 @@ public class CameraYawAction extends AbstractInputAction{
         cubeN = obj.getEngine().getSceneManager().getSceneNode("myCubeNode");
         yawAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
 
-        if(new CheckIfAbovePlane().checkLocal(cubeN))
-            cubeN.yaw(yawAmt);
+
+        if(!obj.getCharaSelect()){
+
+            if(new CheckIfAbovePlane().checkLocal(cubeN))
+                cubeN.yaw(yawAmt);
+        }
+
+
     }
 }
