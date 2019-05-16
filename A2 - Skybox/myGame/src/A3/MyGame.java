@@ -549,13 +549,8 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public void removeArrows() {
-        SceneNode arrowDelete;
         for(int i = 0; i < arrowIDs.size(); i++){
-//            System.out.println("removing arrow " + (arrowIDs[i]));
-            arrowDelete = getEngine().getSceneManager().getSceneNode(arrowIDs.get(i));
-//            System.out.println("removing i am hererereerere " + arrowIDs.get(i));
-
-            gameObjectsToRemove.remove(arrowDelete);
+            getEngine().getSceneManager().destroySceneNode(arrowIDs.get(i));
         }
         arrowIDs.clear();
 
@@ -599,10 +594,10 @@ public class MyGame extends VariableFrameRateGame {
             gpName = im.getFirstGamepadName();
         }
         orbitController = new Camera3PController(this, camera, cameraN, cubeN, gpName, im);
-
         cubeN.attachChild(getEngine().getSceneManager().getSceneNode("CharaSelect"));
-//        getEngine().getSceneManager().getSceneNode("CharaSelect").yaw((Degreef.createFrom(180)));
-        getEngine().getSceneManager().getSceneNode("CharaSelect").moveRight(10);
+        getEngine().getSceneManager().getSceneNode("CharaSelect").moveRight((float)16.8);
+        getEngine().getSceneManager().getSceneNode("CharaSelect").moveUp((float)4.6);
+        getEngine().getSceneManager().getSceneNode("CharaSelect").roll(Degreef.createFrom(19));
     }
 
 
@@ -649,9 +644,8 @@ public class MyGame extends VariableFrameRateGame {
 
         //Deletion of arrows
         int timepast = elapsTimeSec - timetest;
-        if(timepast == 10) {
+        if(timepast == 7) {
             removeArrows();
-            System.out.println("Arrows removed");
             timetest = elapsTimeSec;
         }
         //Setting sound up
@@ -818,10 +812,10 @@ public class MyGame extends VariableFrameRateGame {
         Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 
         try{
-            int arrowIDNum = physicsEng.nextUID();
-            Entity arrowE = getEngine().getSceneManager().createEntity("arrow " +arrowIDNum, "earth.obj");
-            arrowN = rootN.createChildSceneNode("arrow " + arrowIDNum);
-            arrowIDs.add("arrow " + arrowIDNum);
+            String arrowIDNum = "arrow " + physicsEng.nextUID();
+            Entity arrowE = getEngine().getSceneManager().createEntity(arrowIDNum, "earth.obj");
+            arrowN = rootN.createChildSceneNode(arrowIDNum);
+            arrowIDs.add(arrowIDNum);
             System.out.println("arrow" + arrowIDNum);
             arrowN.scale(.02f, .02f, .50f);
             arrowN.attachObject(arrowE);

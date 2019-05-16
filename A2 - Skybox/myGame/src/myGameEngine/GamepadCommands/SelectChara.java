@@ -34,6 +34,7 @@ public class SelectChara extends AbstractInputAction {
                }
            }
            myGame.setCharaSelect(false);
+           myGame.getEngine().getSceneManager().destroySceneNode("CharaSelect");
            myGame.setupNetworking();
         }
 

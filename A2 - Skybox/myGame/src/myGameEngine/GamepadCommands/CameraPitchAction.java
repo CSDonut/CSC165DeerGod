@@ -25,12 +25,10 @@ public class CameraPitchAction extends AbstractInputAction{
         rotAmt = Degreef.createFrom(e.getValue()/speedScaleInvert);
         pitchAmt = Degreef.createFrom(e.getValue()/speedScale);
 
-        if(!obj.getCharaSelect()){
 
+        if(!obj.getCharaSelect()){
             if(new CheckIfAbovePlane().checkLocal(cubeN))
                 cubeN.pitch(pitchAmt);
         }
-
-
     }
 }

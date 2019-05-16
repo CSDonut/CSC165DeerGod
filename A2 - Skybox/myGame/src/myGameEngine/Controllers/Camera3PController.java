@@ -14,6 +14,7 @@ import ray.input.action.*;
 public class Camera3PController {
     private Camera camera; //the camera being controlled
     private SceneNode cameraN; //the node the camera is attached to
+    private SceneNode selectChara;
     private SceneNode target; //the target the camera looks at
     private SceneNode avatarN;
     private float cameraAzimuth; //rotation of camera around Y axis
@@ -24,6 +25,7 @@ public class Camera3PController {
     private float camPitchAmt, camYawAmt, camZoomAmt;
 
     public Camera3PController(MyGame myGameObj, Camera cam, SceneNode camN, SceneNode targ, String controllerName, InputManager im) {
+        selectChara = myGameObj.getEngine().getSceneManager().getSceneNode("CharaSelect");
         camera = cam;
         cameraN = camN;
         target = targ;
