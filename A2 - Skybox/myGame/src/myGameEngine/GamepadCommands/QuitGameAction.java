@@ -16,6 +16,7 @@ public class QuitGameAction extends AbstractInputAction {
     }
 
     public void performAction(float time, Event event){
+        game.setDontUpdate(true);
         System.out.println("Shutdown requested");
         if(game.getisClientConnected() && game.getProtClient() != null){
             try {

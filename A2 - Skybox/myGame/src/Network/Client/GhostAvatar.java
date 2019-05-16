@@ -13,27 +13,36 @@ public class GhostAvatar {
     private SceneNode node;
     private Entity entity;
     private Vector3 pos;
-    private float direct;
+    private String direct;
     private boolean model;
+    float posN00 = .6f,posN02 = .5f,posN20 = .5f,posN22 = -.6f;
 
 
     public GhostAvatar(UUID id, Vector3 position, boolean modelType) {
         this.id = id;
         this.pos = position;
         this.model = modelType;
-        this.direct = 0;
     }
 
     public Entity getEntity() {
         return entity;
     }
 
-    public float getDirect(){
-        return direct;
-    }
+    public float getDirect(int i){
 
-    public void resetDirect(){
-        direct = 0;
+        if (i == 0){
+            return posN22;
+        }else
+        if (i == 2){
+            return posN20;
+        }else
+        if (i == 6){
+            return posN02;
+        }else
+        if (i == 8){
+            return posN00;
+        }
+        else return 1;
     }
 
     public UUID getId() {
@@ -65,8 +74,11 @@ public class GhostAvatar {
         pos = newPosition;
     }
 
-    public void setRotate(float direction){
-        direct = direction;
+    public void setRotate(float pos00, float pos02, float pos20,float pos22){
+        posN00 = pos00;
+        posN02 = pos02;
+        posN20 = pos20;
+        posN22 = pos22;
     }
 
 }

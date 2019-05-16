@@ -70,25 +70,28 @@ public class Camera3PController {
                 if (evt.getValue() < -0.2) {
                     rotAmount = evt.getValue()/-camPitchAmt;
                     avatarN.yaw(Degreef.createFrom(rotAmount));
-                    try {
-                        games.sendRotateAmount(rotAmount);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 else
                 { if (evt.getValue() > 0.2) {
                     rotAmount= evt.getValue()/-camPitchAmt;
                     avatarN.yaw(Degreef.createFrom(rotAmount));
-                    try {
-                        games.sendRotateAmount(rotAmount);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 else
                 { rotAmount=0.0f;
                 }
+                }
+
+                System.out.println(avatarN.getLocalRotation());
+
+                try {
+                    games.sendRotateAmount(
+                            avatarN.getLocalRotation().value(0,0),
+                            avatarN.getLocalRotation().value(0,2),
+                            avatarN.getLocalRotation().value(2,0),
+                            avatarN.getLocalRotation().value(2,2)
+                    );
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 cameraAzimuth += rotAmount;
                 cameraAzimuth = cameraAzimuth % 360;

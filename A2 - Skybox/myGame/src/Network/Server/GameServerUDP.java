@@ -72,8 +72,11 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
 
             if (msgTokens[0].compareTo("rotate") == 0) {
                 UUID clientID = UUID.fromString(msgTokens[1]);
-                String pos = msgTokens[2];
-                sendRotateMessages(clientID,pos);
+                String pos00 = msgTokens[2];
+                String pos02 = msgTokens[3];
+                String pos20 = msgTokens[4];
+                String pos22 = msgTokens[5];
+                sendRotateMessages(clientID,pos00, pos02, pos20, pos22);
             }
 
             if (msgTokens[0].compareTo("spear") == 0)
@@ -84,12 +87,13 @@ public class GameServerUDP extends GameConnectionServer<UUID> {
         }
     }
 
-    private void sendRotateMessages(UUID clientID, String pos) {
+    private void sendRotateMessages(UUID clientID, String pos00, String pos02, String pos20,String pos22) {
         try
         {
             String message = "rotate," + clientID.toString();
-            message += "," + pos;
+            message += "," + pos00 + "," + pos02 + "," + pos20 +"," + pos22;
             forwardPacketToAll(message, clientID);
+
         }
         catch (IOException e)
         {

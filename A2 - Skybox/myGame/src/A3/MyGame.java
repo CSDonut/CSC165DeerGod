@@ -65,6 +65,7 @@ import ray.physics.PhysicsEngineFactory;
 import ray.audio.*;
 import com.jogamp.openal.ALFactory;
 
+@SuppressWarnings("ALL")
 public class MyGame extends VariableFrameRateGame {
     // to minimize variable allocation in update()
     private int bgVolume = 10;
@@ -77,9 +78,8 @@ public class MyGame extends VariableFrameRateGame {
     private ProtocolClient protClient;
     private boolean isClientConnected;
     private Vector<UUID> gameObjectsToRemove;
-    private JButton button;
-    private Container test;
-
+    private boolean dontUpdate = false;
+    static  Matrix3f tempMatrix;
     private int timetest = 0;
 
     IAudioManager audioMgr;
@@ -501,8 +501,7 @@ public class MyGame extends VariableFrameRateGame {
     }
     //============= Networking ==========================================
 
-    public void setupNetworking()
-    { gameObjectsToRemove = new Vector<UUID>();
+    public void setupNetworking() throws IOException { gameObjectsToRemove = new Vector<UUID>();
         isClientConnected = false;
         try
         { protClient = new ProtocolClient(InetAddress.
@@ -515,6 +514,12 @@ public class MyGame extends VariableFrameRateGame {
         { // ask client protocol to send initial join message
             //to server, with a unique identifier for this client
             protClient.sendJoinMessage();
+            sendRotateAmount(
+                    getEngine().getSceneManager().getSceneNode("myCubeNode").getLocalRotation().value(0,0),
+                    getEngine().getSceneManager().getSceneNode("myCubeNode").getLocalRotation().value(0,2),
+                    getEngine().getSceneManager().getSceneNode("myCubeNode").getLocalRotation().value(2,0),
+                    getEngine().getSceneManager().getSceneNode("myCubeNode").getLocalRotation().value(2,2)
+            );
         } }
 
     protected void processNetworking(float elapsTime)
@@ -533,6 +538,25 @@ public class MyGame extends VariableFrameRateGame {
     { SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myCubeNode");
         return dolphinN.getWorldPosition();
     }
+
+    public float getPlayerRotationX1(){
+        SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        return dolphinN.getLocalRotation().value(0,0);
+    }
+    public float getPlayerRotationZ1(){
+        SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        return dolphinN.getLocalRotation().value(0,2);
+    }
+
+    public float getPlayerRotationX2(){
+        SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        return dolphinN.getLocalRotation().value(2,0);
+    }
+    public float getPlayerRotationZ2(){
+        SceneNode dolphinN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        return dolphinN.getLocalRotation().value(2,2);
+    }
+
 
     public void addGhostAvatarToGameWorld(GhostAvatar avatar)
             throws IOException
@@ -554,6 +578,7 @@ public class MyGame extends VariableFrameRateGame {
         ghostN.setLocalPosition(avatar.getPos().x(), avatar.getPos().y() ,avatar.getPos().z());
         avatar.setNode(ghostN);
         avatar.setEntity(ghostE);
+        ghostN.roll(Degreef.createFrom(-90));
         //avatar.setPosition(0,0,0);
 
     } }
@@ -583,21 +608,55 @@ public class MyGame extends VariableFrameRateGame {
         return isClientConnected;
     }
 
+    @SuppressWarnings("deprecation")
     public void updateGhostPosition(){
 
         if(!ghostListEmpty){
            Iterator<GhostAvatar> iterate = ghostList.iterator();
-           while (iterate.hasNext()){
+           int counter = 0;
+           float [] tableTemp = new float[9];
+            while (iterate.hasNext()){
                GhostAvatar temp = iterate.next();
-               temp.getNode().setLocalPosition(temp.getPos());
-               temp.getNode().yaw(Degreef.createFrom(temp.getDirect()));
-               temp.resetDirect();
+
+               for(int i = 0;  i < tableTemp.length; i++){
+
+                   tableTemp[i] = 0;
+
+                   if(i == 0){
+                       tableTemp[i] = temp.getDirect(i);
+                   }
+                   if(i == 2){
+                       tableTemp[i] = temp.getDirect(i);
+                   }
+                   if(i == 4){
+                       tableTemp[i] = 1;
+                   }
+                   if(i == 6){
+                       tableTemp[i] = temp.getDirect(i);
+                   }
+                   if(i == 8){
+                       tableTemp[i] = temp.getDirect(i);
+                   }
+               }
+
+                for(int i = 0;  i < tableTemp.length; i++){
+                    if(tableTemp[i] == 0){
+                        counter++;
+                    }
+                }
+
+                Matrix3 from = tempMatrix.createFrom(tableTemp);
+
+                System.out.println(from);
+                temp.getNode().setLocalPosition(temp.getPos());
+                temp.getNode().setLocalRotation(from);
+
            }
         }
     }
 
-    public void sendRotateAmount(float angle) throws IOException {
-        protClient.sendRotateMessage(angle);
+    public void sendRotateAmount(float x1, float x2, float x3, float x4) throws IOException {
+        protClient.sendRotateMessage(x1,x2,x3,x4);
     }
 
     //============ END Networking =====================================
@@ -623,54 +682,61 @@ public class MyGame extends VariableFrameRateGame {
 
     @Override
     protected void update(Engine engine) {
-        // build and set HUD
-        rs = (GL4RenderSystem) engine.getRenderSystem();
+
+       if(dontUpdate){
+           return;
+       }
+
+        if(!dontUpdate){
+            // build and set HUD
+            rs = (GL4RenderSystem) engine.getRenderSystem();
 //        checkDistancePlanetToPlayer(engine);
-        elapsTime += engine.getElapsedTimeMillis();
-        elapsTimeSec = Math.round(elapsTime/1000.0f);
-        elapsTimeStr = Integer.toString(elapsTimeSec);
-        SceneManager sm = engine.getSceneManager();
-        SceneNode avatarN = sm.getSceneNode("myCubeNode");
+            elapsTime += engine.getElapsedTimeMillis();
+            elapsTimeSec = Math.round(elapsTime/1000.0f);
+            elapsTimeStr = Integer.toString(elapsTimeSec);
+            SceneManager sm = engine.getSceneManager();
+            SceneNode avatarN = sm.getSceneNode("myCubeNode");
 
-        dispStr = "Arrows Left:  " + arrowAmt;
-        rs.setHUD(dispStr, 15, 15);
+            dispStr = "Arrows Left:  " + arrowAmt;
+            rs.setHUD(dispStr, 15, 15);
 
 
-        im.update(elapsTime);
-        orbitController.updateCameraPosition();
+            im.update(elapsTime);
+            orbitController.updateCameraPosition();
 
-        if(!charaSelect){
-            updateGhostPosition();
-            processNetworking(elapsTime);
-        }
+            if(!charaSelect){
+                updateGhostPosition();
+                processNetworking(elapsTime);
+            }
 
-        if (running) {
-            Matrix4 mat;
-            physicsEng.update(elapsTime);
-            for (SceneNode s : engine.getSceneManager().getSceneNodes()) {
-                if (s.getPhysicsObject() != null) {
-                    mat = Matrix4f.createFrom(arrayConversion.toFloatArray(
-                            s.getPhysicsObject().getTransform()));
-                    s.setLocalPosition(mat.value(0, 3), mat.value(1, 3),
-                            mat.value(2, 3));
+            if (running) {
+                Matrix4 mat;
+                physicsEng.update(elapsTime);
+                for (SceneNode s : engine.getSceneManager().getSceneNodes()) {
+                    if (s.getPhysicsObject() != null) {
+                        mat = Matrix4f.createFrom(arrayConversion.toFloatArray(
+                                s.getPhysicsObject().getTransform()));
+                        s.setLocalPosition(mat.value(0, 3), mat.value(1, 3),
+                                mat.value(2, 3));
+                    }
                 }
             }
-        }
-        animationUpdate();
-        if(done){
-            animationStart();
-            done = false;
-        }
+            animationUpdate();
+            if(done){
+                animationStart();
+                done = false;
+            }
 
-        //Deletion of arrows
-        int timepast = elapsTimeSec - timetest;
-        if(timepast == 7) {
-            removeArrows();
-            timetest = elapsTimeSec;
+            //Deletion of arrows
+            int timepast = elapsTimeSec - timetest;
+            if(timepast == 7) {
+                removeArrows();
+                timetest = elapsTimeSec;
+            }
+            //Setting sound up
+            bgSound.setLocation(avatarN.getWorldPosition());
+            setEarParameters(sm);
         }
-        //Setting sound up
-        bgSound.setLocation(avatarN.getWorldPosition());
-        setEarParameters(sm);
 
     }
 
@@ -689,7 +755,7 @@ public class MyGame extends VariableFrameRateGame {
            Object temp = animationsToStop.next();
            if (temp instanceof SkeletalEntity){
                ((SkeletalEntity) temp).stopAnimation();
-               ((SkeletalEntity) temp).update();
+//               ((SkeletalEntity) temp).update();
            }
        }
     }
@@ -828,6 +894,7 @@ public class MyGame extends VariableFrameRateGame {
         SceneNode arrowN, avatarN, arrowGroundN;
         double[] temptf;
 //        avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+
         avatarN = shooter;
         SceneNode tessN = this.getEngine().getSceneManager().getSceneNode("TessN");
         Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
@@ -837,7 +904,6 @@ public class MyGame extends VariableFrameRateGame {
             Entity arrowE = getEngine().getSceneManager().createEntity(arrowIDNum, "earth.obj");
             arrowN = rootN.createChildSceneNode(arrowIDNum);
             arrowIDs.add(arrowIDNum);
-            System.out.println("arrow" + arrowIDNum);
             arrowN.scale(.02f, .02f, .50f);
             arrowN.attachObject(arrowE);
             arrowN.setLocalPosition(avatarN.getLocalPosition());
@@ -894,7 +960,14 @@ public class MyGame extends VariableFrameRateGame {
 
     public void setDeerOrHunt(boolean i){
         deerOrHunt = i;
-        System.out.println(deerOrHunt);
+    }
+
+    public void setDontUpdate(boolean i){
+        dontUpdate = i;
+    }
+
+    public boolean getDontUpdate(){
+        return dontUpdate;
     }
 
 

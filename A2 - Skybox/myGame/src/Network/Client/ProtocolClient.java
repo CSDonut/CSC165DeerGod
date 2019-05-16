@@ -107,9 +107,13 @@ public class ProtocolClient extends GameConnectionClient {
             if (messageTokens[0].compareTo("rotate") == 0)
             {
                 UUID ghostID = UUID.fromString(messageTokens[1]);
-                float rotateAmt = Float.parseFloat(messageTokens[2]);
+                float pos00 = Float.parseFloat(messageTokens[2]);
+                float pos02 = Float.parseFloat(messageTokens[3]);
+                float pos20 = Float.parseFloat(messageTokens[4]);
+                float pos22 = Float.parseFloat(messageTokens[5]);
+
                 try {
-                    rotateGhost(ghostID,rotateAmt);
+                    rotateGhost(ghostID,pos00, pos02, pos20, pos22);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -226,13 +230,13 @@ public class ProtocolClient extends GameConnectionClient {
     }
 
 
-    public void sendRotateMessage(float angle) throws IOException {
+    public void sendRotateMessage(float x1, float x2, float x3, float x4) throws IOException {
         String message = "rotate," + id.toString();
-        message += "," + angle;
+        message += "," +x1 +"," + x2  + "," +x3  + "," +x4;
         sendPacket(message);
     }
 
-    public void rotateGhost(UUID ghostID, float rotate) throws IOException {
+    public void rotateGhost(UUID ghostID, float pos00, float pos02, float pos20,float pos22) throws IOException {
 
         GhostAvatar ghost = new GhostAvatar(null, null, false);
         Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
@@ -247,9 +251,8 @@ public class ProtocolClient extends GameConnectionClient {
             }
         }
 
-
         if (exist){
-            ghost.setRotate(rotate);
+            ghost.setRotate(pos00,pos02,pos20,pos22);
         }
 
     }
