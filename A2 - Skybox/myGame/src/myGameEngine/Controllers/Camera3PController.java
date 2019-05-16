@@ -2,6 +2,7 @@ package myGameEngine.Controllers;
 
 
 import A3.MyGame;
+import Network.Client.ProtocolClient;
 import javafx.scene.Scene;
 import ray.input.InputManager;
 import ray.input.action.AbstractInputAction;
@@ -10,11 +11,13 @@ import ray.rml.*;
 
 import ray.input.action.*;
 
+import java.io.IOException;
+
 
 public class Camera3PController {
     private Camera camera; //the camera being controlled
     private SceneNode cameraN; //the node the camera is attached to
-    private SceneNode selectChara;
+    private MyGame games;
     private SceneNode target; //the target the camera looks at
     private SceneNode avatarN;
     private float cameraAzimuth; //rotation of camera around Y axis
@@ -25,7 +28,7 @@ public class Camera3PController {
     private float camPitchAmt, camYawAmt, camZoomAmt;
 
     public Camera3PController(MyGame myGameObj, Camera cam, SceneNode camN, SceneNode targ, String controllerName, InputManager im) {
-        selectChara = myGameObj.getEngine().getSceneManager().getSceneNode("CharaSelect");
+        games = myGameObj;
         camera = cam;
         cameraN = camN;
         target = targ;
@@ -61,24 +64,36 @@ public class Camera3PController {
     { // Moves the camera around the target (changes camera azimuth).
         public void performAction(float time, net.java.games.input.Event evt)
         {
-            float rotAmount;
-            if (evt.getValue() < -0.2) {
-                rotAmount = evt.getValue()/-camPitchAmt;
-                avatarN.yaw(Degreef.createFrom(rotAmount));
-            }
-            else
-            { if (evt.getValue() > 0.2) {
-                rotAmount= evt.getValue()/-camPitchAmt;
-                avatarN.yaw(Degreef.createFrom(rotAmount));
 
+            if(!games.getCharaSelect()){
+                float rotAmount;
+                if (evt.getValue() < -0.2) {
+                    rotAmount = evt.getValue()/-camPitchAmt;
+                    avatarN.yaw(Degreef.createFrom(rotAmount));
+                    try {
+                        games.sendRotateAmount(rotAmount);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                { if (evt.getValue() > 0.2) {
+                    rotAmount= evt.getValue()/-camPitchAmt;
+                    avatarN.yaw(Degreef.createFrom(rotAmount));
+                    try {
+                        games.sendRotateAmount(rotAmount);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                { rotAmount=0.0f;
+                }
+                }
+                cameraAzimuth += rotAmount;
+                cameraAzimuth = cameraAzimuth % 360;
+                updateCameraPosition();
             }
-            else
-            { rotAmount=0.0f; }
-            }
-            cameraAzimuth += rotAmount;
-            cameraAzimuth = cameraAzimuth % 360;
-            updateCameraPosition();
-
         }
     }
     // similar for OrbitRadiasAction, OrbitElevationAction
@@ -86,22 +101,26 @@ public class Camera3PController {
     { // Moves the camera around the target (changes camera azimuth).
         public void performAction(float time, net.java.games.input.Event evt)
         {
-            float zoomAmount;
-            if (evt.getValue() < -0.2)
-            { zoomAmount = evt.getValue()/camZoomAmt; }
-            else
-            { if (evt.getValue() > 0.2)
-            { zoomAmount = evt.getValue()/camZoomAmt; }
-            else
-            { zoomAmount=0.1f; }
-            }
-            radias += zoomAmount;
 
-            if (radias <= 0){
-                radias = .01f;
-            }
+            if(!games.getCharaSelect()){
+                float zoomAmount;
+                if (evt.getValue() < -0.2)
+                { zoomAmount = evt.getValue()/camZoomAmt; }
+                else
+                { if (evt.getValue() > 0.2)
+                { zoomAmount = evt.getValue()/camZoomAmt; }
+                else
+                { zoomAmount=0.1f; }
+                }
+                radias += zoomAmount;
 
-            updateCameraPosition();
+                if (radias <= 0){
+                    radias = .01f;
+                }
+
+                updateCameraPosition();
+
+            }
         }
     }
 
@@ -109,18 +128,20 @@ public class Camera3PController {
     { // Moves the camera around the target (changes camera azimuth).
         public void performAction(float time, net.java.games.input.Event evt)
         {
-            float rotAmount;
-            if (evt.getValue() < -0.2)
-            { rotAmount= evt.getValue()/camYawAmt; }
-            else
-            { if (evt.getValue() > 0.2)
-            { rotAmount = evt.getValue()/camYawAmt; }
-            else
-            { rotAmount=0.0f; }
+            if(!games.getCharaSelect()){
+                float rotAmount;
+                if (evt.getValue() < -0.2)
+                { rotAmount= evt.getValue()/camYawAmt; }
+                else
+                { if (evt.getValue() > 0.2)
+                { rotAmount = evt.getValue()/camYawAmt; }
+                else
+                { rotAmount=0.0f; }
+                }
+                cameraElevation += rotAmount;
+                cameraElevation = cameraElevation % 360;
+                updateCameraPosition();
             }
-            cameraElevation += rotAmount;
-            cameraElevation = cameraElevation % 360;
-            updateCameraPosition();
         }
     }
 

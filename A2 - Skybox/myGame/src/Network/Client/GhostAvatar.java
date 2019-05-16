@@ -13,6 +13,7 @@ public class GhostAvatar {
     private SceneNode node;
     private Entity entity;
     private Vector3 pos;
+    private float direct;
     private boolean model;
 
 
@@ -20,10 +21,19 @@ public class GhostAvatar {
         this.id = id;
         this.pos = position;
         this.model = modelType;
+        this.direct = 0;
     }
 
     public Entity getEntity() {
         return entity;
+    }
+
+    public float getDirect(){
+        return direct;
+    }
+
+    public void resetDirect(){
+        direct = 0;
     }
 
     public UUID getId() {
@@ -55,5 +65,8 @@ public class GhostAvatar {
         pos = newPosition;
     }
 
+    public void setRotate(float direction){
+        direct = direction;
+    }
 
 }

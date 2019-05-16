@@ -3,6 +3,7 @@ package Network.Client;
 import A3.MyGame;
 import graphicslib3D.Vector3D;
 import ray.networking.client.GameConnectionClient;
+import ray.rml.Matrix3;
 import ray.rml.Vector3;
 import ray.rml.Vector3f;
 
@@ -96,6 +97,23 @@ public class ProtocolClient extends GameConnectionClient {
                     e.printStackTrace();
                 }
             }
+
+            if (messageTokens[0].compareTo("spear") == 0)
+            {
+                UUID ghostID = UUID.fromString(messageTokens[1]);
+                createGhostSpear(ghostID);
+            }
+
+            if (messageTokens[0].compareTo("rotate") == 0)
+            {
+                UUID ghostID = UUID.fromString(messageTokens[1]);
+                float rotateAmt = Float.parseFloat(messageTokens[2]);
+                try {
+                    rotateGhost(ghostID,rotateAmt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -147,10 +165,30 @@ public class ProtocolClient extends GameConnectionClient {
         sendPacket(message);
     }
 
-    public void sendShootMessage(Vector3 position) throws IOException {
-        String message = "shoot," + id.toString();
-        message += "," + position.x()+"," + position.y() + "," + position.z();
+    public void sendShootMessage() throws IOException {
+        String message = "spear," + id.toString();
         sendPacket(message);
+    }
+
+    public void createGhostSpear(UUID ghostID)
+    {
+        GhostAvatar ghost = new GhostAvatar(null, null, false);
+        Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
+        boolean exist = false;
+
+        while (iterator.hasNext()){
+            GhostAvatar temp = iterator.next();
+
+            if(temp.getId().toString().equals(ghostID.toString())){
+                exist = true;
+                ghost = temp;
+            }
+        }
+
+        if (exist){
+            game.shootArrow(ghost.getNode(), false);
+        }
+
     }
 
     public void MoveAvatar(UUID ghostID, Vector3 position) throws IOException {
@@ -187,4 +225,32 @@ public class ProtocolClient extends GameConnectionClient {
         sendPacket(message);
     }
 
+
+    public void sendRotateMessage(float angle) throws IOException {
+        String message = "rotate," + id.toString();
+        message += "," + angle;
+        sendPacket(message);
+    }
+
+    public void rotateGhost(UUID ghostID, float rotate) throws IOException {
+
+        GhostAvatar ghost = new GhostAvatar(null, null, false);
+        Iterator<GhostAvatar> iterator = ghostAvatars.iterator();
+        boolean exist = false;
+
+        while (iterator.hasNext()){
+            GhostAvatar temp = iterator.next();
+
+            if(temp.getId().toString().equals(ghostID.toString())){
+                exist = true;
+                ghost = temp;
+            }
+        }
+
+
+        if (exist){
+            ghost.setRotate(rotate);
+        }
+
+    }
 }

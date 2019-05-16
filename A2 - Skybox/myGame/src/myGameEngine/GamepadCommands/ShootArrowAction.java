@@ -28,6 +28,6 @@ public class ShootArrowAction extends AbstractInputAction{
     }
 
     public void performAction(float time, Event e){
-        myGameObj.shootArrow();
+        myGameObj.shootArrow(avatarN, true);
     }
 }

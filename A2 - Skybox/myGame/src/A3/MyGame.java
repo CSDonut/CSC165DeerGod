@@ -369,12 +369,26 @@ public class MyGame extends VariableFrameRateGame {
         plightNode2.attachObject(plight2);
         plightNode2.setLocalPosition(10,10,-10);
 
-
         Entity testLight = sm.createEntity("lightCube", "cube.obj");
         testLight.setPrimitive(Primitive.TRIANGLES);
         plightNode2.scale(.3f,.3f,.3f);
-
         plightNode2.attachObject(testLight);
+
+
+        Light plight = sm.createLight("testLamp", Light.Type.DIRECTIONAL);
+        plight.setAmbient(new Color(.1f, .1f, .1f));
+        plight.setDiffuse(new Color(0.0f, 0.0f, 0.0f));
+        plight.setSpecular(new Color(1.0f, 1.0f, 1.0f));
+        plight.setRange(100f);
+
+        SceneNode plightNode = sm.getRootSceneNode().createChildSceneNode("plightNode");
+        plightNode.attachObject(plight);
+        plightNode.setLocalPosition(-10,10,20);
+
+        Entity testLight2 = sm.createEntity("lightCube2", "cube.obj");
+        testLight2.setPrimitive(Primitive.TRIANGLES);
+        plightNode.scale(.3f,.3f,.3f);
+        plightNode.attachObject(testLight2);
 
 
         //Rotation code
@@ -576,8 +590,14 @@ public class MyGame extends VariableFrameRateGame {
            while (iterate.hasNext()){
                GhostAvatar temp = iterate.next();
                temp.getNode().setLocalPosition(temp.getPos());
+               temp.getNode().yaw(Degreef.createFrom(temp.getDirect()));
+               temp.resetDirect();
            }
         }
+    }
+
+    public void sendRotateAmount(float angle) throws IOException {
+        protClient.sendRotateMessage(angle);
     }
 
     //============ END Networking =====================================
@@ -801,13 +821,14 @@ public class MyGame extends VariableFrameRateGame {
         physicsEng.setGravity(gravity);
     }
 
-    public void shootArrow(){
+    public void shootArrow(SceneNode shooter, boolean hunter){
         float mass = 1.0f;
         float staticMass = 0.0f;
         float arrowSpeed = 1500.0f;
         SceneNode arrowN, avatarN, arrowGroundN;
         double[] temptf;
-        avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+//        avatarN = getEngine().getSceneManager().getSceneNode("myCubeNode");
+        avatarN = shooter;
         SceneNode tessN = this.getEngine().getSceneManager().getSceneNode("TessN");
         Tessellation tessE = ((Tessellation) tessN.getAttachedObject("tessE"));
 
@@ -835,7 +856,9 @@ public class MyGame extends VariableFrameRateGame {
             arrowPhysObj.setBounciness(1.0f);
             arrowN.setPhysicsObject(arrowPhysObj);
             ShootArrowSound.play();
-            
+            if(hunter){
+                protClient.sendShootMessage();
+            }
 
 
         }catch(Exception err){
@@ -873,5 +896,6 @@ public class MyGame extends VariableFrameRateGame {
         deerOrHunt = i;
         System.out.println(deerOrHunt);
     }
+
 
 }
