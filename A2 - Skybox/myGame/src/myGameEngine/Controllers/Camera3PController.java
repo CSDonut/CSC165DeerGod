@@ -81,7 +81,6 @@ public class Camera3PController {
                 }
                 }
 
-                System.out.println(avatarN.getLocalRotation());
 
                 try {
                     games.sendRotateAmount(

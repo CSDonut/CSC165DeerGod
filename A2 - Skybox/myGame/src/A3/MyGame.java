@@ -153,8 +153,7 @@ public class MyGame extends VariableFrameRateGame {
 
     @Override
     protected void setupWindow(RenderSystem rs, GraphicsEnvironment ge) {
-        rs.createRenderWindow(new DisplayMode(1000, 700, 24, 60), false);
-
+        rs.createRenderWindow(new DisplayMode(1920, 1080, 32, 60), true);
     }
 
 
@@ -646,8 +645,6 @@ public class MyGame extends VariableFrameRateGame {
                 }
 
                 Matrix3 from = tempMatrix.createFrom(tableTemp);
-
-                System.out.println(from);
                 temp.getNode().setLocalPosition(temp.getPos());
                 temp.getNode().setLocalRotation(from);
 
@@ -690,7 +687,6 @@ public class MyGame extends VariableFrameRateGame {
         if(!dontUpdate){
             // build and set HUD
             rs = (GL4RenderSystem) engine.getRenderSystem();
-//        checkDistancePlanetToPlayer(engine);
             elapsTime += engine.getElapsedTimeMillis();
             elapsTimeSec = Math.round(elapsTime/1000.0f);
             elapsTimeStr = Integer.toString(elapsTimeSec);
@@ -727,6 +723,7 @@ public class MyGame extends VariableFrameRateGame {
                 done = false;
             }
 
+            checkDistance();
             //Deletion of arrows
             int timepast = elapsTimeSec - timetest;
             if(timepast == 7) {
@@ -930,6 +927,34 @@ public class MyGame extends VariableFrameRateGame {
         }catch(Exception err){
             err.printStackTrace();
         }
+    }
+
+    private void checkDistance(){
+            Vector3 deerPosition;
+            float distanceX, distanceZ, distanceY, distantLimit = 1f;
+            GhostAvatar ghost;
+            SceneNode ghostNode;
+            SceneNode arrowTemp;
+            Iterator<GhostAvatar> iterate = ghostList.iterator();
+
+            while (iterate.hasNext()){
+               ghost = iterate.next();
+               ghostNode = ghost.getNode();
+
+                for(int i = 0; i < arrowIDs.size(); i++){
+                    arrowTemp = getEngine().getSceneManager().getSceneNode(arrowIDs.get(i));
+                    deerPosition = ghostNode.getLocalPosition();
+
+
+                    distanceX = Math.abs(arrowTemp.getLocalPosition().x() - deerPosition.x());
+                    distanceZ = Math.abs(arrowTemp.getLocalPosition().z() - deerPosition.z());
+                    if(distanceX < distantLimit && distanceZ < distantLimit){
+
+                        System.out.println("Talk Smack, get Wacked Node:" + i);
+                        System.out.println("=====");
+                    }
+                }
+            }
     }
 
     public void setDeerModel() throws IOException {
