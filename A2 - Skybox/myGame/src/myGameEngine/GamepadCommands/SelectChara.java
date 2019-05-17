@@ -22,17 +22,12 @@ public class SelectChara extends AbstractInputAction {
     public void performAction(float v, Event event) {
         charaSelect = myGame.getCharaSelect();
         selectHunter = myGame.getDeerOrHunt();
-        if(charaSelect){
-           if(selectHunter){
-               myGame.setHunterModel();
-           }
-           else{
+        myGame.setDeerOrHunt(false);
                try {
                    myGame.setDeerModel();
                } catch (IOException e) {
                    e.printStackTrace();
                }
-           }
            myGame.setCharaSelect(false);
            myGame.getEngine().getSceneManager().destroySceneNode("CharaSelect");
             try {
@@ -43,4 +38,3 @@ public class SelectChara extends AbstractInputAction {
         }
 
     }
-}

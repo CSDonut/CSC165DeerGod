@@ -10,5 +10,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 0.000000
 illum 1
-map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\charaSelectOne.png
-map_d C:\\Users\\UltraCombo\\Program\\CSC\\MyGame165\\assets\\textures\\charaSelectOne.png
+map_Kd charaSelectOne.png
+map_d charaSelectOne.png

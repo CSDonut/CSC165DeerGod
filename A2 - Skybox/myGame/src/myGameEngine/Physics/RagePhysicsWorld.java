@@ -9,7 +9,7 @@ package myGameEngine.Physics;
         import ray.rml.Vector3f;
 
 public class RagePhysicsWorld {
-    private SceneNode PlayerGroupN, RootNode, gndNode, treeNode,
+    private SceneNode PlayerGroupN, RootNode, gndNode, worldObjectNodes,
             characterNode;
     private PhysicsEngine physicsEng;
     private ArrayConversion arrayConversion;
@@ -21,7 +21,7 @@ public class RagePhysicsWorld {
         this.physicsEng = physicsEng;
         this.arrayConversion = new ArrayConversion();
         //Game Nodes
-        this.treeNode = (SceneNode)RootNode.getChild("treeNode");
+        this.worldObjectNodes = (SceneNode) myGameObj.getEngine().getSceneManager().getSceneNode("worldObjectsN");
         this.gndNode = myGameObj.getEngine().getSceneManager().getSceneNode("TessN");
         this.characterNode = (SceneNode)PlayerGroupN.getChild("myCubeNode");
 
@@ -35,11 +35,13 @@ public class RagePhysicsWorld {
         PhysicsObject gndPlaneP, treePhysObj,characterPhysObj;
 
         //Making phys object for tree
-        temptf = arrayConversion.toDoubleArray(treeNode.getLocalTransform().toFloatArray());
+        for(int i = 1; i < 25; i++){
+            temptf = arrayConversion.toDoubleArray(worldObjectNodes.getChild("treeNode" + i).getLocalTransform().toFloatArray());
 //        treePhysObj = physicsEng.addBoxObject(physicsEng.nextUID(), staticObjMass, temptf, treeSize);
-        treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 4.0f);
-        treePhysObj.setBounciness(.20f);
-        treeNode.setPhysicsObject(treePhysObj);
+            treePhysObj = physicsEng.addSphereObject(physicsEng.nextUID(), staticObjMass, temptf, 4.0f);
+            treePhysObj.setBounciness(.20f);
+            worldObjectNodes.getChild("treeNode" + i).setPhysicsObject(treePhysObj);
+        }
 
         //Making phys obj for character
 //        temptf = arrayConversion.toDoubleArray(characterNode.getLocalTransform().toFloatArray());

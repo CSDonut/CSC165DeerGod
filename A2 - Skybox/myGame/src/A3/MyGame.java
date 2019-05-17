@@ -81,6 +81,8 @@ public class MyGame extends VariableFrameRateGame {
     private boolean dontUpdate = false;
     static  Matrix3f tempMatrix;
     private int timetest = 0;
+    private Vector rockNames;
+
 
     IAudioManager audioMgr;
     Sound bgSound, ShootArrowSound, hunterWalkSound;
@@ -96,7 +98,7 @@ public class MyGame extends VariableFrameRateGame {
     private Vector<GhostAvatar> ghostList = new Vector<GhostAvatar>();
     private boolean ghostListEmpty = true;
     static protected ScriptEngine jsEngine;
-    SceneNode  playerGroupN, rootN;
+    SceneNode  playerGroupN, rootN, worldObjectsN;
 
     private boolean done = true;
     private boolean running = true;
@@ -125,9 +127,9 @@ public class MyGame extends VariableFrameRateGame {
     }
 
     public static void main(String[] args) {
-        Game game = new MyGame("192.168.1.33", Integer.parseInt("59000"));
+        Game game = new MyGame(args[0], Integer.parseInt(args[1]));
         ScriptEngineManager factory = new ScriptEngineManager();
-        String scriptFileName = "src/Scripts/InitPlanetParams.js";
+        String scriptFileName = "Scripts/InitPlanetParams.js";
         List<ScriptEngineFactory> list = factory.getEngineFactories();
         System.out.println("Script Engines found: ");
         for(ScriptEngineFactory f: list){
@@ -153,7 +155,7 @@ public class MyGame extends VariableFrameRateGame {
 
     @Override
     protected void setupWindow(RenderSystem rs, GraphicsEnvironment ge) {
-        rs.createRenderWindow(new DisplayMode(1920, 1080, 32, 60), true);
+        rs.createRenderWindow(new DisplayMode(1280, 720, 32, 60), false);
     }
 
 
@@ -191,7 +193,7 @@ public class MyGame extends VariableFrameRateGame {
 
         jsEngine = factory.getEngineByName("js");
         // use spin speed setting from the first script to initialize dolphin rotation
-        File scriptFile1 = new File("src/Scripts/InitPlanetParams.js");
+        File scriptFile1 = new File("Scripts/InitPlanetParams.js");
         this.runScript(scriptFile1);
 
         //Set up phys object for avatar
@@ -230,6 +232,10 @@ public class MyGame extends VariableFrameRateGame {
 
 
         playerGroupN = sm.getRootSceneNode().createChildSceneNode("playerGroupNode");
+        worldObjectsN = sm.getRootSceneNode().createChildSceneNode("worldObjectsN");
+        worldObjectsN.setLocalPosition(0,.8f,0);
+
+
         //Cube code
         Entity cubeE = sm.createEntity("myCube", "Chiro.obj");
         cubeE.setPrimitive(Primitive.TRIANGLES);
@@ -267,19 +273,24 @@ public class MyGame extends VariableFrameRateGame {
         //==============================================
 
         //Blender Tree =============================================================
-        Entity treeOne = sm.createEntity("Tree1","Tree1.obj");
-        Texture tex = sm.getTextureManager().getAssetByPath("treeTexture.png");
-        TextureState tstate = (TextureState) sm.getRenderSystem()
-                .createRenderState(RenderState.Type.TEXTURE);
-        tstate.setTexture(tex);
-        treeOne.setRenderState(tstate);
-        treeOne.setRenderState(zstate);
 
-        SceneNode manN =
-                sm.getRootSceneNode().createChildSceneNode("treeNode");
-        manN.attachObject(treeOne);
-        manN.scale(0.5f, 0.5f, 0.5f);
-        manN.translate(-2f, 0.8f, -2f);
+        for(int i = 1; i < 25; i++){
+            Entity treeOne = sm.createEntity("Tree" + i,"Tree1.obj");
+            Texture tex = sm.getTextureManager().getAssetByPath("treeTexture.png");
+            TextureState tstate = (TextureState) sm.getRenderSystem()
+                    .createRenderState(RenderState.Type.TEXTURE);
+            tstate.setTexture(tex);
+            treeOne.setRenderState(tstate);
+            treeOne.setRenderState(zstate);
+
+            SceneNode manN =
+                    worldObjectsN.createChildSceneNode("treeNode" + i);
+            manN.attachObject(treeOne);
+            manN.scale(0.5f, 0.5f, 0.5f);
+            manN.setLocalPosition(((Double)(jsEngine.get("tree" + i + "x"))).floatValue(),
+                    0 ,
+                    ((Double)(jsEngine.get("tree" + i + "z"))).floatValue());
+        }
 
         //=====Rock Border===========================================================
         Entity borderOne = sm.createEntity("Border","Border.obj");
@@ -290,24 +301,34 @@ public class MyGame extends VariableFrameRateGame {
         borderOne.setRenderState(Bstate);
 
         SceneNode borderNode =
-                sm.getRootSceneNode().createChildSceneNode("borderNode");
+                worldObjectsN.createChildSceneNode("borderNode");
         borderNode.attachObject(borderOne);
         borderNode.scale(2.f, 2.0f, 2.0f);
-        borderNode.translate(15f, 0.0f, 10f);
-        borderNode.yaw(Degreef.createFrom(90));
+        borderNode.translate(-20f, 0.0f, 25f);
+        borderNode.yaw(Degreef.createFrom(0));
 
         //===========Crystal Rocks============================================================
 
-        Entity rock = sm.createEntity("rock1","Rock2.obj");
-        Texture rocktex = sm.getTextureManager().getAssetByPath("rock.jpg");
-        TextureState Rstate = (TextureState) sm.getRenderSystem()
-                .createRenderState(RenderState.Type.TEXTURE);
-        Rstate.setTexture(rocktex);
-        rock.setRenderState(Rstate);
+        for(int i = 1; i < 4; i++){
+            Entity rock = sm.createEntity("rock" + i,"Rock2.obj");
+            Texture rocktex = sm.getTextureManager().getAssetByPath("rock.jpg");
+            TextureState Rstate = (TextureState) sm.getRenderSystem()
+                    .createRenderState(RenderState.Type.TEXTURE);
+            Rstate.setTexture(rocktex);
+            rock.setRenderState(Rstate);
 
-        SceneNode rockNode =
-                sm.getRootSceneNode().createChildSceneNode("rockNode");
-        rockNode.attachObject(rock);
+            SceneNode rockNode =
+                    worldObjectsN.createChildSceneNode("rockNode" + i);
+            rockNode.setLocalPosition(((Double)(jsEngine.get("rock" + i + "x"))).floatValue(),
+                    0 ,
+                    ((Double)(jsEngine.get("rock" + i + "z"))).floatValue());
+            if(i%2 == 0){
+                rockNode.yaw(Degreef.createFrom(180));
+            }
+            rockNode.attachObject(rock);
+        }
+
+
 
         //============ Grass ==========================================================
 
@@ -374,7 +395,7 @@ public class MyGame extends VariableFrameRateGame {
         plightNode2.attachObject(testLight);
 
 
-        Light plight = sm.createLight("testLamp", Light.Type.DIRECTIONAL);
+        Light plight = sm.createLight("testLamp", Light.Type.SPOT);
         plight.setAmbient(new Color(.1f, .1f, .1f));
         plight.setDiffuse(new Color(0.0f, 0.0f, 0.0f));
         plight.setSpecular(new Color(1.0f, 1.0f, 1.0f));
@@ -693,7 +714,7 @@ public class MyGame extends VariableFrameRateGame {
             SceneManager sm = engine.getSceneManager();
             SceneNode avatarN = sm.getSceneNode("myCubeNode");
 
-            dispStr = "Arrows Left:  " + arrowAmt;
+            dispStr = "";
             rs.setHUD(dispStr, 15, 15);
 
 
@@ -775,6 +796,7 @@ public class MyGame extends VariableFrameRateGame {
         CameraTiltAction CameraTiltCmd = new CameraTiltAction(this);
         ShootArrowAction ShootArrowCmd = new ShootArrowAction(this, physicsEng);
         SelectChara selectChara = new SelectChara(this);
+        SelectCharaTwo selectCharaTwo = new SelectCharaTwo(this);
 
 
         ArrayList controllers = im.getControllers();
@@ -829,7 +851,7 @@ public class MyGame extends VariableFrameRateGame {
 
                     // Select Game Charater
                 im.associateAction(c, net.java.games.input.Component.Identifier.Button._1, selectChara, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
-
+                im.associateAction(c, net.java.games.input.Component.Identifier.Button._2, selectCharaTwo, InputManager.INPUT_ACTION_TYPE.ON_PRESS_ONLY);
 
 
                 //Quit game action using button 7(Start button) on gamepad

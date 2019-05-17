@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\grassblade.png
+map_Kd grassblade.png
 
 newmtl 2
 Ns 9.803922
@@ -21,5 +21,5 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 2
-map_Kd C:\Users\UltraCombo\Program\CSC\MyGame165\assets\textures\grassblade.png
-map_Ka C:\\Users\\juhyt\\Desktop\\images.jpg
+map_Kd grassblade.png
+map_Ka images.jpg
